@@ -1,0 +1,59 @@
+{
+  "name": "vcn",
+  "version": "0.0.1",
+  "description": "online system to manage the database of the veterinary \tprofessional of Nigeria and automate the process of retention fee payment and license renewal to ease the license management. \n.",
+  "productName": "vcn",
+  "author": "<muhammadupborn@gmail.com>",
+  "private": true,
+  "scripts": {
+    "buid": "build:azure",
+    "lint": "eslint --ext .js,.vue ./",
+    "test": "echo \"No test specified\" && exit 0",
+    "deploy": "quasar build -m pwa  && surge dist/pwa  https://vcn.surge.sh"
+  },
+  "dependencies": {
+    "@capacitor-community/fcm": "^2.0.2",
+    "@capacitor/push-notifications": "^4.0.1",
+    "@quasar/extras": "^1.0.0",
+    "axios": "^0.21.1",
+    "capacitor": "^0.5.5",
+    "core-js": "^3.6.5",
+    "moment": "^2.29.4",
+    "numeral": "^2.0.6",
+    "quasar": "^1.0.0",
+    "register-service-worker": "^1.7.2",
+    "vue-i18n": "^8.0.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.13.14",
+    "@quasar/app": "^2.0.0",
+    "devtron": "^1.4.0",
+    "electron": "^9.0.0",
+    "electron-builder": "^22.4.0",
+    "electron-debug": "^3.0.1",
+    "electron-devtools-installer": "^3.0.0",
+    "electron-packager": "^14.1.1",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "eslint-webpack-plugin": "^2.0.0",
+    "prettier": "^2.5.1",
+    "workbox-webpack-plugin": "^5.0.0"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}

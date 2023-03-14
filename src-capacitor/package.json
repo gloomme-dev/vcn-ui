@@ -1,0 +1,12 @@
+{
+  "name": "nnpccargo",
+  "version": "0.0.1",
+  "description": "NNPC Cargo shipping monitoring & Evaulation",
+  "author": "ipi <ipi.ng>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "2.5.0",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}

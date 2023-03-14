@@ -1,0 +1,7 @@
+{
+  "appId": "com.ipi.nnpc",
+  "appName": "nnpcCargo",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "www"
+}

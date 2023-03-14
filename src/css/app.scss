@@ -1,0 +1,39 @@
+// app global css in SCSS form
+
+
+//Khula
+// import Poppins font from google fonts
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+//make poppins font available to all elements
+* {
+  font-family: 'Poppins', sans-serif;
+}
+.home-bg {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: top;
+  //background-image: url("../../public/img/bg.jpg");
+}
+
+.glass-top-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+.glass-bg-dark {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+/*=== Apple UI CSS   ==*/
+//White Opacity
+.white-frost {
+  background: rgba(240, 240, 240, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+
+.rounded-borders{
+  border-radius: 32px ;
+}
