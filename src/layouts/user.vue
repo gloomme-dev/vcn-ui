@@ -37,24 +37,33 @@
             </q-card>
           </div>
 
-          <q-item class="text-white" :to="{ name:'member-profile' }"  clickable v-ripple>
+          <q-item class="text-white" :to="{ name:'member-dashboard' }"  clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="account_circle" />
+              <q-icon name="dashboard" />
             </q-item-section>
 
-            <q-item-section> Profile </q-item-section>
+            <q-item-section> Dashboard </q-item-section>
           </q-item>
 
-          <q-item class="text-white" :to="{ name:'permit' }"  clickable v-ripple>
+<!--          <q-item class="text-white" :to="{ name:'permit' }"  clickable v-ripple>-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon name="workspace_premium" />-->
+<!--            </q-item-section>-->
+
+<!--            <q-item-section> Permits </q-item-section>-->
+<!--          </q-item>-->
+
+          <q-item class="text-white" :to="{ name:'user-invoice' }"  clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="workspace_premium" />
+              <q-icon name="receipt" />
             </q-item-section>
 
-            <q-item-section> Permits </q-item-section>
+            <q-item-section> Invoices </q-item-section>
           </q-item>
 
 
-          <q-item class="text-white"   clickable v-ripple>
+
+          <q-item  :to="{ name: 'payment-user' }" class="text-white"   clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="account_balance" />
             </q-item-section>
@@ -98,6 +107,7 @@ import { LocalStorage } from "quasar";
 export default {
   data() {
     return {
+      invoices: [],
       user: '',
       left: false,
       update: false,
@@ -106,6 +116,20 @@ export default {
   },
 
   methods: {
+    // get activities
+    getActivities() {
+      let url = "invoice"+"/"+LocalStorage.getItem("profile").id;
+      this.$axios
+        .get(url)
+        .then(response => {
+          console.log(response);
+          this.invoices = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
     // updateApp () {
     //   this.workbox.addEventListener('controlling', () => {
     //     window.location.reload()
@@ -118,6 +142,7 @@ export default {
     // load the profile from local storage and convert it to a JSON object
 
   this.user = LocalStorage.getItem("profile");
+
 
   },
 };

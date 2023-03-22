@@ -97,20 +97,35 @@ export default {
     loading: false,
   }),
   mounted() {
-
+    // this.getMyActivities();
   },
   methods: {
+    // get User activities
+    getMyActivities(){
+      let url = "activity/1";
+      this.get(url)
+        .then((response) => {
+          console.log(response);
+          this.activities = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$q.notify({
+            type: "negative",
+            message: "Cannot get user activities",
+          });
+          // return error
+        });
+
+    },
     getProfile() {
       const url = "profile"
       this.get(url)
         .then((response) => {
 
-
           //  save to local storage
           localStorage.setItem('profile', JSON.stringify(response.data))
-          this.profile = response.data
-          this.$store.commit('initDoc', response.data)
-
+          // this.profile = response.data
         })
         .catch((error) => {
           console.log(error);
@@ -142,22 +157,28 @@ export default {
       this.post(query, this.user)
         .then((response) => {
 
-          // console.log(response);
 
           this.setAuthToken(response.data.token);
 
           let userRoles = response.data.roles[0];
 
+          if(userRoles){
+            this.getProfile();
 
-          this.getProfile();
+            // this.$router.push({ name: "dashboard-user" });
+            if(userRoles.authority==="VET"){
+              this.$router.push({ name: "member-dashboard" });
+            }
+            else if(userRoles.authority==="ADMIN"){
+              this.$router.push({ name: "members-admin" });
+            }
+            else if(userRoles.authority==="PARA"){
+              this.$router.push({ name: "member-dashboard" });
+            }
+          }
 
-          // this.$router.push({ name: "dashboard-user" });
-          if(userRoles.authority==="MEMBER"){
-            this.$router.push({ name: "dashboard-user" });
-          }
-          else if(userRoles.authority==="ADMIN"){
-            this.$router.push({ name: "members-admin" });
-          }
+
+
 
         })
         .catch((error) => {

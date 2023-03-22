@@ -5,12 +5,12 @@
       behavior="desktop"
       v-model="left"
       show-if-above
-      :width="200"
+      :width="220"
       :breakpoint="400"
       content-class="bg"
     >
-      <q-scroll-area class=" fit bg-primary   " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
-        <q-list style="height: 1000px; margin-top: 0px" fit padding class="  q-gutter-y-lg text-grey-7 glass-top-dark text-white menu-list">
+      <q-scroll-area class=" fit bg-secondary   " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
+        <q-list style="height: 1000px; margin-top: 0px" fit padding class="  q-gutter-y-lg text-grey-7 glass-top-dark text-white menu-list q-pr-sm">
           <div class="text-center q-mt-lg q-mb-lg" >
 
             <q-card
@@ -43,23 +43,47 @@
             <q-item-section> Members </q-item-section>
           </q-item>
 
-          <q-item class="text-white" :to="{ name:'permits-admin' }"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="workspace_premium" />
-            </q-item-section>
+<!--          <q-item class="text-white" :to="{ name:'permits-admin' }"  clickable v-ripple>-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon name="workspace_premium" />-->
+<!--            </q-item-section>-->
 
-            <q-item-section> Permits </q-item-section>
-          </q-item>
+<!--            <q-item-section> Permits </q-item-section>-->
+<!--          </q-item>-->
 
-          <q-item class="text-white"   clickable v-ripple>
+          <q-item class="text-white"  :to="{ name:'transactions-admin' }"  clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="account_balance" />
+              <q-icon name="account_balance_wallet" />
             </q-item-section>
 
             <q-item-section> Payments </q-item-section>
           </q-item>
 
-          <q-item class="text-white"  clickable v-ripple>
+          <q-item class="text-white" :to="{ name:'admin-invoice' }"  clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="receipt" />
+            </q-item-section>
+
+            <q-item-section> Invoices </q-item-section>
+          </q-item>
+
+          <q-item class="text-white"  :to="{ name:'payment-admin' }"  clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="account_balance" />
+            </q-item-section>
+
+            <q-item-section> Payment Types</q-item-section>
+          </q-item>
+
+          <q-item class="text-white"  :to="{ name:'activities-admin' }"  clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="event" />
+            </q-item-section>
+
+            <q-item-section> Activities </q-item-section>
+          </q-item>
+
+          <q-item  :to="{ name:'staff-admin' }"  class="text-white"  clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="people" />
             </q-item-section>
@@ -133,7 +157,8 @@ q-drawer{
   color: #ffffff;
   padding-right: 12px;
   margin-right: 4px;
-  border-radius: 0 5px 5px 0;
+  margin-left: 8px;
+  border-radius: 5px 5px 5px 5px;
   background-color: #2264d1;
 }
 .q-tabs--active, .q-tabs--active{

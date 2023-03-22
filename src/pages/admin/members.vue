@@ -147,6 +147,17 @@
                   <q-item-label caption>Email</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-separator inset vertical />
+              <q-item clickable class="col">
+                <q-item-section top avatar>
+                  <q-avatar text-color="purple" icon="mail" />
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label>{{  props.row.roles[0].title }}</q-item-label>
+                  <q-item-label caption>Membership</q-item-label>
+                </q-item-section>
+              </q-item>
 
               <q-item  class="">
                 <q-item-section side>
@@ -246,12 +257,9 @@ export default {
   },
 
   methods: {
-
     // get all members
     getAllMembers (url) {
-
       this.get(url).then(response => {
-        console.log(response)
         if (response.data.length === 0) {
 
           this.$q.notify({
@@ -266,41 +274,6 @@ export default {
         }
       })
     },
-
-
-    shareIncident (description, file) {
-      if (navigator.share) {
-        navigator.share({
-          title: 'Incident Report',
-          text: description,
-          url: file,
-        })
-          .then(() =>{
-            this.$q.notify({
-              message: 'Incident shared successfully',
-              color: 'positive',
-              position: 'top',
-              icon: 'done'
-            })
-          })
-          .catch((error) => {
-            this.$q.notify({
-              message: 'Error sharing incident',
-              color: 'negative',
-              position: 'top',
-              icon: 'warning'
-            })
-          });
-      } else {
-        this.$q.notify({
-          message: 'Web Share API is not supported in this browser.',
-          color: 'negative',
-          position: 'top',
-          icon: 'warning'
-        })
-      }
-    },
-
     // download image
     downloadImage(file) {
       const link = document.createElement('a');
@@ -432,60 +405,8 @@ export default {
           });
           // return error
         });
-    },
-    //get incident metaData
-    getIncidentMetaData(id) {
-      this.get("incident/" + id)
-        .then((response) => {
-          this.incident = response.data;
-          this.dialog.view = true;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.loading = !this.loading
-          // return error
-        });
-    },
-    //update incident status
-    updateIncidentStatus(row, status){
-      const query = "incident/" + row.id;
-      const data = {
-        title: row.title,
-        description: row.description,
-        locationId: row.locationId,
-        userLocationEnum: 'POLLING_UNIT',
-        incidentStatus: status,
-        lgaNumber: row.lgaNumber,
-        wardNumber: row.wardNumber,
-        puNumber: row.puNumber
-      }
-
-      this.put(query, data)
-        .then((response) => {
-          this.unresolvedList.splice(this.unresolvedList.indexOf(row), 1)
-
-          // this.resolvedList.push(response.data)
-          setTimeout(() => {
-            this.$q.notify({
-              progress: true,
-              position: 'bottom-right',
-              message: 'Incident has been marked as resolved',
-              icon: 'task_alt',
-              color: 'dark',
-              textColor: 'white'
-            })
-          }, 500)
-        })
-        .catch((error) => {
-          console.log(error);
-          // this.loading = !this.loading
-          this.$q.notify({
-            type: "negative",
-            message: "Cannot update status",
-          });
-          // return error
-        });
     }
+
   },
   beforeDestroy() {
     //  reset store

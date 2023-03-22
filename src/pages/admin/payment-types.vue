@@ -12,9 +12,9 @@
         :label="$route.meta.title+ ''"
         color="secondary"
         flat
-        icon="workspace_premium"
+        :icon="$route.meta.icon"
       >
-        <q-badge color="secondary" floating>{{ allMembers.length }}</q-badge>
+        <q-badge color="secondary" floating>{{ payments.length }}</q-badge>
       </q-btn>
 
       <q-space />
@@ -49,21 +49,7 @@
 
 
     </q-toolbar>
-    <q-tabs
-      style="height: 56px;"
-      v-model="tab"
-      align="justify"
-      class=" tab-cont tabs-container-bg "
-      indicator-color="transparent"
-      active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
-    >
-      <q-tab class="text-grey" name="inactive" :label="'Pending '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ inActiveMembers.length  }}</q-badge>
-      </q-tab>
-      <q-tab class="text-grey" name="resolved" :label="'Approved '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ ActiveMembers.length  }}</q-badge>
-      </q-tab>
-    </q-tabs>
+
     <q-tab-panels
       v-model="tab"
       animated
@@ -71,13 +57,12 @@
       transition-next="jump-down"
       class="bg-transparent text-white "
     >
-      <!--      Inactive Member-->
       <q-tab-panel flat  name="inactive" class="bg-transparent row justify-center">
         <q-table
           flat
           class="bg-transparent rounded-borders row col-md-12 col-xs-12"
           :pagination="pagination"
-          :data="permits"
+          :data="payments"
           :filter="filter"
           hide-header
           grid-header
@@ -85,26 +70,7 @@
           dense
           row-key="id"
         >
-          <!--        <template v-slot:header="props">-->
-          <!--          <q-tr-->
-          <!--            class="bg-transparent rounded-borders q-mb-xs q-mt-xs"-->
-          <!--            style="max-width: 600px"-->
-          <!--            :props="props">-->
-          <!--            <div-->
-          <!--              class="row q-gutter-y-xs text-center  bg-white q-ma-sm "-->
-          <!--            >-->
-          <!--              <q-th-->
-          <!--                v-for="col in props.cols"-->
-          <!--                :key="col.name"-->
-          <!--                :props="props"-->
-          <!--                class=" text-purple col  text-left q-item  "-->
-          <!--              >-->
-          <!--                {{ col.label }}-->
-          <!--              </q-th>-->
-          <!--            </div>-->
-          <!--          </q-tr>-->
-          <!--        </template>-->
-          <template v-slot:body="props">
+            <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
                 <q-item clickable class="col">
@@ -112,47 +78,46 @@
                     <q-avatar
                       class="avartar"
                       text-color="red"
-                      icon="person_search"
+                      icon="account_balance"
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="">{{ props.row.createdBy.firstName+ " "+props.row.createdBy.lastName }}</q-item-label>
-                    <q-item-label caption>Applicant</q-item-label>
+                    <q-item-label class="">{{ props.row.paymentName }}</q-item-label>
+                    <q-item-label caption>Payment</q-item-label>
                   </q-item-section>
                 </q-item>
-
                 <q-separator inset vertical />
                 <q-item clickable class="col"  >
                   <q-item-section top avatar>
-                    <q-avatar text-color="orange" icon="call" />
+                    <q-avatar text-color="orange" icon="account_balance" />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.phone }}</q-item-label>
-                    <q-item-label caption>Phone</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator inset vertical />
-                <!--            registered voters -->
-                <q-item clickable class="col">
-                  <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="mail" />
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.email }}</q-item-label>
-                    <q-item-label caption>Email</q-item-label>
+                    <q-item-label>{{   formatNumber( props.row.amount) }}</q-item-label>
+                    <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
                 <q-item clickable class="col">
                   <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="domain" />
+                    <q-avatar text-color="purple" icon="account_balance" />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.organizationName }}</q-item-label>
-                    <q-item-label caption>Organization</q-item-label>
+                    <q-item-label>{{  props.row.paymentType }}</q-item-label>
+                    <q-item-label caption>Type</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section top avatar>
+                    <q-avatar text-color="purple" icon="description" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{  props.row.description }}</q-item-label>
+                    <q-item-label caption>Description</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -218,19 +183,103 @@ box-sizing: border-box;
         </q-table>
       </q-tab-panel>
     </q-tab-panels>
+    <!--create a payment type-->
+    <q-dialog
+      v-model="dialog.payment"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style">
+        <q-toolbar class=" q-mt-xs">
+          <q-avatar size=""  color="" class="avartar">
+            <q-btn flat round color="grey"  dense icon="agent_account" />
+          </q-avatar>
+          <q-toolbar-title class="text-grey text-weight-bold text-left">Create an payment type </q-toolbar-title>
+          <q-space />
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-card-section
+          class="row q-mt-lg justify-center row q-gutter-y-md col-md-8  q-gutter-x-md justify-around q-pa-sm"
+        >
+
+          <!--              Payment name-->
+          <div class="col-md-10 card-input">
+            <q-input label="Payment"   type="text"   color="grey" v-model="payment.paymentName"   >
+              <template  v-slot:prepend>
+                <q-icon name="event" />
+              </template>
+            </q-input>
+          </div>
+
+          <!--              Payment amount-->
+          <div class="col-md-10 card-input">
+            <q-input label="Amount"   type="text"   color="grey" v-model="payment.amount"   >
+              <template  v-slot:prepend>
+                <q-icon name="account_balance" />
+              </template>
+            </q-input>
+          </div>
+
+          <!--          activitypayment type-->
+          <div class="col-md-10 col-xs-11  card-input">
+            <q-select      label="Type"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="payment.paymentType" :options="actTypes" >
+              <template v-slot:prepend>
+                <q-icon name="event_note" />
+              </template>
+            </q-select>
+          </div>
+
+          <!--              activitypayment description-->
+          <div class="col-md-10 card-input">
+            <q-input label="Description"   type="text"   color="grey" v-model="payment.description"   >
+              <template  v-slot:prepend>
+                <q-icon name="description" />
+              </template>
+            </q-input>
+          </div>
+
+
+
+        </q-card-section>
+        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
+          <q-btn style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Create" v-close-popup @click="createPayment" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab
+        @click="dialog.payment = !dialog.payment"
+        v-model="fabRight"
+        vertical-actions-align="right"
+        color="primary"
+        glossy
+        icon="keyboard_arrow_up"
+        direction="up"
+      >
+      </q-fab>
+    </q-page-sticky>
   </q-page>
 </template>
 
 <script>
 export default {
   data: () => ({
-    inActiveMembers: [],
-    ActiveMembers: [],
+    actTypes: ['Yealy','Once'],
+    payments: [],
+    payment: {
+      paymentName: '',
+      amount: '',
+      paymentType: '',
+      description: '',
+    },
     fabRight: false,
     dialog: {
+      payment: false,
       view: false
     },
-    permits: [],
     allMembers: [],
     tab: 'inactive',
     loading: true,
@@ -244,9 +293,8 @@ export default {
 
   }),
   mounted() {
-    let url = 'users/'
-    this.getAllMembers(url)
-    this.getAllPermits()
+    let url = this.$route.meta.url
+    this.getPayments(url)
   },
 
   computed: {
@@ -256,31 +304,38 @@ export default {
   },
 
   methods: {
+    // createPayment
+    createPayment () {
+      let url = 'payment/create'
+      this.payment.amount = parseInt(this.payment.amount)
+      this.post(url, this.payment).then(response => {
+        this.payments.unshift(response.data)
+        // clear the form
+        this.payment.paymentName = ''
+        this.payment.amount = ''
+        this.payment.paymentType = ''
+        this.payment.description = ''
 
-    // get all permits
-
-    getAllPermits(){
-      const url = 'permit'
-      this.get(url).then(response => {
-        this.permits = response.data
-
+        this.$q.notify({
+          message: 'Payment type created successfully',
+          color: 'positive',
+          position: 'top',
+          icon: 'done'
         })
-        .catch((error) => {
+      })
+        .catch(error => {
           console.log(error);
-          this.loading = !this.loading
           this.$q.notify({
-            color: 'red-4',
-            textColor: 'white',
-            icon: 'report_problem',
-            message: 'Can not get '+this.$route.meta.title
-          })
-          // return error
+            message: "Error creating Payment type",
+            color: "negative",
+            position: "top",
+            timeout: 2000
+          });
         });
-
     },
 
     // get all members
-    getAllMembers (url) {
+    getPayments (url) {
 
       this.get(url).then(response => {
         if (response.data.length === 0) {
@@ -293,11 +348,44 @@ export default {
           })
           this.$store.commit('decrementPageNumber')
         } else {
-          this.allMembers = response.data
+          this.payments = response.data
         }
       })
     },
 
+
+    shareIncident (description, file) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Incident Report',
+          text: description,
+          url: file,
+        })
+          .then(() =>{
+            this.$q.notify({
+              message: 'Incident shared successfully',
+              color: 'positive',
+              position: 'top',
+              icon: 'done'
+            })
+          })
+          .catch((error) => {
+            this.$q.notify({
+              message: 'Error sharing incident',
+              color: 'negative',
+              position: 'top',
+              icon: 'warning'
+            })
+          });
+      } else {
+        this.$q.notify({
+          message: 'Web Share API is not supported in this browser.',
+          color: 'negative',
+          position: 'top',
+          icon: 'warning'
+        })
+      }
+    },
 
     // download image
     downloadImage(file) {
@@ -430,8 +518,60 @@ export default {
           });
           // return error
         });
-    }
+    },
+    //get incident metaData
+    getIncidentMetaData(id) {
+      this.get("incident/" + id)
+        .then((response) => {
+          this.incident = response.data;
+          this.dialog.view = true;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          // return error
+        });
+    },
+    //update incident status
+    updateIncidentStatus(row, status){
+      const query = "incident/" + row.id;
+      const data = {
+        title: row.title,
+        description: row.description,
+        locationId: row.locationId,
+        userLocationEnum: 'POLLING_UNIT',
+        incidentStatus: status,
+        lgaNumber: row.lgaNumber,
+        wardNumber: row.wardNumber,
+        puNumber: row.puNumber
+      }
 
+      this.put(query, data)
+        .then((response) => {
+          this.unresolvedList.splice(this.unresolvedList.indexOf(row), 1)
+
+          // this.resolvedList.push(response.data)
+          setTimeout(() => {
+            this.$q.notify({
+              progress: true,
+              position: 'bottom-right',
+              message: 'Incident has been marked as resolved',
+              icon: 'task_alt',
+              color: 'dark',
+              textColor: 'white'
+            })
+          }, 500)
+        })
+        .catch((error) => {
+          console.log(error);
+          // this.loading = !this.loading
+          this.$q.notify({
+            type: "negative",
+            message: "Cannot update status",
+          });
+          // return error
+        });
+    }
   },
   beforeDestroy() {
     //  reset store

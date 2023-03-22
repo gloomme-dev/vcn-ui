@@ -9,12 +9,12 @@
       <q-btn
         rounded
         no-caps
-        :label="$route.meta.title+ ''"
+        :label="$route.meta.title+ 's'"
         color="secondary"
         flat
-        icon="workspace_premium"
+        icon="groups"
       >
-        <q-badge color="secondary" floating>{{ allMembers.length }}</q-badge>
+        <q-badge color="secondary" floating>{{ staff.length }}</q-badge>
       </q-btn>
 
       <q-space />
@@ -49,21 +49,6 @@
 
 
     </q-toolbar>
-    <q-tabs
-      style="height: 56px;"
-      v-model="tab"
-      align="justify"
-      class=" tab-cont tabs-container-bg "
-      indicator-color="transparent"
-      active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
-    >
-      <q-tab class="text-grey" name="inactive" :label="'Pending '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ inActiveMembers.length  }}</q-badge>
-      </q-tab>
-      <q-tab class="text-grey" name="resolved" :label="'Approved '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ ActiveMembers.length  }}</q-badge>
-      </q-tab>
-    </q-tabs>
     <q-tab-panels
       v-model="tab"
       animated
@@ -77,7 +62,7 @@
           flat
           class="bg-transparent rounded-borders row col-md-12 col-xs-12"
           :pagination="pagination"
-          :data="permits"
+          :data="staff"
           :filter="filter"
           hide-header
           grid-header
@@ -85,25 +70,6 @@
           dense
           row-key="id"
         >
-          <!--        <template v-slot:header="props">-->
-          <!--          <q-tr-->
-          <!--            class="bg-transparent rounded-borders q-mb-xs q-mt-xs"-->
-          <!--            style="max-width: 600px"-->
-          <!--            :props="props">-->
-          <!--            <div-->
-          <!--              class="row q-gutter-y-xs text-center  bg-white q-ma-sm "-->
-          <!--            >-->
-          <!--              <q-th-->
-          <!--                v-for="col in props.cols"-->
-          <!--                :key="col.name"-->
-          <!--                :props="props"-->
-          <!--                class=" text-purple col  text-left q-item  "-->
-          <!--              >-->
-          <!--                {{ col.label }}-->
-          <!--              </q-th>-->
-          <!--            </div>-->
-          <!--          </q-tr>-->
-          <!--        </template>-->
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
@@ -116,8 +82,13 @@
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="">{{ props.row.createdBy.firstName+ " "+props.row.createdBy.lastName }}</q-item-label>
-                    <q-item-label caption>Applicant</q-item-label>
+                    <q-item-label class="">{{ props.row.firstName+ " "+props.row.lastName }}</q-item-label>
+                    <q-item-label v-for="(role,index) in props.row.roles" caption :key="index">
+                      <q-badge>
+                        {{ role.title }}
+
+                      </q-badge>
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -128,7 +99,7 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.phone }}</q-item-label>
+                    <q-item-label>{{  props.row.phone }}</q-item-label>
                     <q-item-label caption>Phone</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -140,19 +111,32 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.email }}</q-item-label>
+                    <q-item-label>{{  props.row.email }}</q-item-label>
                     <q-item-label caption>Email</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
+                <!--            registered voters -->
                 <q-item clickable class="col">
                   <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="domain" />
+                    <q-avatar text-color="purple" icon="home_work" />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.organizationName }}</q-item-label>
-                    <q-item-label caption>Organization</q-item-label>
+                    <q-item-label>{{  props.row.stateOrigin }}</q-item-label>
+                    <q-item-label caption>State</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+                <!--            registered voters -->
+                <q-item clickable class="col">
+                  <q-item-section top avatar>
+                    <q-avatar text-color="purple" icon="home" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{  props.row.lgaOrigin }}</q-item-label>
+                    <q-item-label caption>LGA</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -218,19 +202,191 @@ box-sizing: border-box;
         </q-table>
       </q-tab-panel>
     </q-tab-panels>
+<!--    create staff-->
+    <q-dialog
+      v-model="dialog.staff"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style">
+        <q-toolbar class=" q-mt-xs">
+          <q-avatar size=""  color="" class="avartar">
+            <q-btn flat round color="grey"  dense icon="agent_account" />
+          </q-avatar>
+          <q-toolbar-title class="text-grey text-weight-bold text-left">Add staff</q-toolbar-title>
+          <q-space />
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-card-section
+          class="row q-mt-xs justify-center row q-gutter-y-md col-md-8  q-gutter-x-md justify-around q-pa-sm"
+        >
+
+
+          <!--          Roles-->
+          <div class="col-md-6">
+            <label class="text-grey text-capitalize">Select Role </label>
+            <q-select
+              class="col-md-3"
+              outlined
+              behavior="menu"
+              v-model="rolesSelect"
+              :options="roles"
+              color="primary"
+              clearable
+              options-selected-class="text-primary"
+            >
+              <template v-slot:option="scope">
+                <q-item
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+
+
+                  <q-item-section>
+                    <q-item-label > {{ scope.opt.title }}</q-item-label>
+                    <q-item-label caption> {{ scope.opt.description }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset />
+
+              </template>
+              <template v-slot:selected>
+                <q-chip
+                  v-if="rolesSelect"
+                  dense
+                  square
+                  color="secondary"
+                  text-color="white"
+                  class="q-my-none q-ml-xs q-mr-none"
+                >
+
+
+                  {{  rolesSelect.title }}
+                </q-chip>
+              </template>
+            </q-select>
+          </div>
+
+          <!--first name-->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-input label="First name"   type="text"   color="grey" v-model="staffForm.firstName"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--lastName          -->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-input label="Last name"   type="text"   color="grey" v-model="staffForm.lastName"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--otherName-->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-input label="Other name"   type="text"   color="grey" v-model="staffForm.otherName"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--              email-->
+          <div class="col-md-6 card-input">
+            <q-input label="Email"   type="email"   color="grey" v-model="staffForm.email"   >
+              <template  v-slot:prepend>
+                <q-icon name="email" />
+              </template>
+            </q-input>
+          </div>
+          <!--                Phone-->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-input label="Phone"   type="text"   color="grey" v-model="staffForm.phone"   >
+              <template  v-slot:prepend>
+                <q-icon name="phone" />
+              </template>
+            </q-input>
+          </div>
+          <!--          Gender-->
+          <div class="col-md-6 col-xs-11  card-input">
+            <q-select      label="Gender"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="staffForm.gender" :options="gender" >
+              <template v-slot:prepend>
+                <q-icon name="wc" />
+              </template>
+            </q-select>
+          </div>
+
+          <!--state/Region-->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-select      label="State"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="staffForm.stateOrigin" :options="states" >
+              <template v-slot:prepend>
+                <q-icon name="home_work" />
+              </template>
+            </q-select>
+          </div>
+          <!--        Local Goverment area-->
+          <div class="col-md-6 col-xs-11 card-input">
+            <q-select     label="Local Government Area"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="staffForm.lgaOrigin" :options="lga_of_origin" >
+              <template v-slot:prepend>
+                <q-icon name="home" />
+              </template>
+            </q-select>
+          </div>
+
+
+        </q-card-section>
+        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
+          <q-btn style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Create" v-close-popup  @click="createStaff" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab
+        @click="dialog.staff = !dialog.staff"
+        v-model="fabRight"
+        vertical-actions-align="right"
+        color="primary"
+        glossy
+        icon="keyboard_arrow_up"
+        direction="up"
+      >
+      </q-fab>
+    </q-page-sticky>
   </q-page>
 </template>
 
 <script>
+import states from "../../states.js";
 export default {
   data: () => ({
+    roles: [],
+    rolesSelect: [],
+    states: Object.keys(states),
+    gender: ["Male", "Female"],
+    staff: [],
+    staffForm: {
+      roles: [],
+      "firstName": "",
+      "lastName": "",
+      "otherName": "",
+      "email": "",
+      "phone": "",
+      "gender": "",
+      "password": "123456",
+      "stateOrigin": "",
+      "lgaOrigin": ""
+    },
     inActiveMembers: [],
     ActiveMembers: [],
     fabRight: false,
     dialog: {
+      staff: false,
       view: false
     },
-    permits: [],
     allMembers: [],
     tab: 'inactive',
     loading: true,
@@ -244,45 +400,42 @@ export default {
 
   }),
   mounted() {
-    let url = 'users/'
-    this.getAllMembers(url)
-    this.getAllPermits()
+    this.getRoles();
+    let url = 'staff'
+    this.getStaff(url)
   },
 
   computed: {
+    lga_of_origin() {
+      return states[this.staffForm.stateOrigin];
+    },
     pageNumber () {
       return this.$store.state.pageNumber
     }
   },
 
   methods: {
+    // get roles
+    getRoles () {
+      this.get('roles').then(response => {
 
-    // get all permits
-
-    getAllPermits(){
-      const url = 'permit'
-      this.get(url).then(response => {
-        this.permits = response.data
-
-        })
+        // filter out the admin role
+        this.roles = response.data.filter(role => role.isAdmin == true)
+      })
         .catch((error) => {
-          console.log(error);
-          this.loading = !this.loading
           this.$q.notify({
-            color: 'red-4',
-            textColor: 'white',
-            icon: 'report_problem',
-            message: 'Can not get '+this.$route.meta.title
+            message: 'Can not get roles',
+            color: 'negative',
+            position: 'top',
+            icon: 'warning'
           })
-          // return error
         });
-
     },
-
     // get all members
-    getAllMembers (url) {
+    getStaff (url) {
 
       this.get(url).then(response => {
+        console.log(response)
         if (response.data.length === 0) {
 
           this.$q.notify({
@@ -293,12 +446,34 @@ export default {
           })
           this.$store.commit('decrementPageNumber')
         } else {
-          this.allMembers = response.data
+          this.staff = response.data
         }
       })
     },
+    // create staff
+    createStaff(){
 
+      this.staffForm.roles.push(this.rolesSelect.id)
 
+      this.post('staff', this.staffForm).then(response => {
+        this.$q.notify({
+          color: 'green-4',
+          textColor: 'white',
+          icon: 'report_problem',
+          message: 'Staff created successfully'
+        })
+        this.staff.unshift(response.data)
+      })
+        .catch(error => {
+          console.log(error);
+          this.$q.notify({
+            message: "Error adding staff",
+            color: "negative",
+            position: "top",
+            timeout: 2000
+          });
+        });
+    },
     // download image
     downloadImage(file) {
       const link = document.createElement('a');
@@ -432,6 +607,7 @@ export default {
         });
     }
 
+
   },
   beforeDestroy() {
     //  reset store
@@ -443,6 +619,13 @@ export default {
 
 <style scoped>
 
+.dialog-style{
+  width: 1105px; max-width: 80vw; height: 866px;
+  background: #FFFFFF;
+  box-shadow: -14px 30px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
 .row-record {
   background: #FFFF;
   box-sizing: border-box;

@@ -3,8 +3,8 @@ import axios from 'axios'
 import { LocalStorage } from "quasar";
 
 
-const url = "https://monkfish-app-fonzu.ondigitalocean.app/api/";
-// const url = "http://localhost:8080/api/";
+// const url = "https://monkfish-app-fonzu.ondigitalocean.app/api/";
+const url = "http://localhost:8080/api/";
 
 const config = {
 
@@ -30,6 +30,14 @@ Vue.mixin({
       // api.defaults.headers.common['Authorization'] = `Bearer ${LocalStorage.getItem('token') !== null ? LocalStorage.getItem('token') : ''}`
 
       return api.put(url + id, data);
+    },
+    putWithNoBody(id) {
+      api.defaults.headers.common["Authorization"] = `Bearer ${
+        LocalStorage.getItem("token") !== null
+          ? LocalStorage.getItem("token")
+          : ""
+      }`;
+      return api.put(url + id);
     },
     postWithHeaders(id, data) {
       api.defaults.headers.common["Authorization"] = `Bearer ${

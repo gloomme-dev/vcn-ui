@@ -1,15 +1,5 @@
 <template>
   <q-page padding>
-<!--    <q-toolbar>-->
-<!--      <q-btn-->
-<!--        rounded-->
-<!--        class="text-primary text-weight-bolder text-h6"-->
-<!--        no-caps-->
-<!--        :label="$route.meta.title"-->
-<!--        flat-->
-<!--      />-->
-
-<!--    </q-toolbar>-->
     <div class="row flex flex-center ">
         <q-stepper
           class="bg-transparent card-form col-md-6 q-pa-lg "
@@ -31,6 +21,48 @@
             class=" q-pa-md justify-center text-h5 text-grey-7 text-center "
           >
             <q-form  @submit.prevent="register"  class="col-md-12 row q-pa-md q-gutter-y-lg q-gutter-x-lg justify-center" enctype="multipart/form-data">
+
+
+<!--              select from acitivities-->
+
+              <div class="col-md-10 card-input">
+<!--                <label class="text-grey text-capitalize">Register as</label>-->
+                <q-select
+                  class="col-md-3"
+                  label="Register as"
+                  use-chips
+                  @input="getActivityRoles(activitySelect)"
+                  behavior="menu"
+                  v-model="activitySelect"
+                  :options="activities"
+                  color="primary"
+                  options-selected-class="text-primary"
+                >
+                  <template v-slot:option="scope">
+                    <q-item
+                      v-bind="scope.itemProps"
+                      v-on="scope.itemEvents"
+                    >
+                      <q-item-section>
+                        <q-item-label > {{ scope.opt.activityName }}</q-item-label>
+<!--                        <q-item-label caption> {{ formatNumber( scope.opt.amount) }}</q-item-label>-->
+                      </q-item-section>
+                    </q-item>
+                    <q-separator inset />
+                  </template>
+                  <template v-slot:selected-item="scope">
+                    <q-chip square
+                      color="secondary"
+                      text-color="white"
+                      class="q-my-none q-ml-xs q-mr-none"
+                    >
+                      {{ scope.opt.activityName }}
+                    </q-chip>
+                  </template>
+                </q-select>
+              </div>
+
+
               <!--first name-->
               <div class="col-md-5 col-xs-11 card-input">
                 <q-input label="First name"   type="text"   color="grey" v-model="form.firstName"   >
@@ -290,6 +322,8 @@ import {register} from "register-service-worker";
 
 export default {
   data: () => ({
+    activitySelect: [],
+    activities: [],
     anotherInstitution: false,
     qualifications: ["Bsc","OND","HND", "NCE", "Msc", "PhD", "Prof"],
     states: Object.keys(states),
@@ -302,7 +336,9 @@ export default {
     deviceInput: null,
     linkInput: null,
     options :stringOptions,
+    userRole: [],
     form:{
+      roles: [],
       firstName: "",
       lastName: "",
       otherName: "",
@@ -321,7 +357,7 @@ export default {
       dateAwarded: "",
       nationality:"",
       vcnNumber:"",
-      roles: ['MEMBER'],
+      activities: [],
       anotherDateAwarded: "",
       imgUploaded: '',
     },
@@ -330,7 +366,7 @@ export default {
     loading: false,
   }),
   mounted() {
-    this.getCountries();
+    this.getActivity()
   },
   computed: {
     lga_of_origin() {
@@ -338,10 +374,42 @@ export default {
     }
   },
   methods: {
+    getActivityRoles(model){
+      this.form.activities = model.id
+
+      this.form.roles = model.roles[0].authority
+    },
+    getActivity () {
+      let url = 'activity'
+      this.get(url).then(response => {
+        console.log(response)
+        if (response.data.length === 0) {
+
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'No more records found'
+          })
+        } else {
+
+          // filter to activityType = 'Once'
+          this.activities = response.data.filter(activity => activity.activityType === 'Registration')
+
+          // this.activities = response.data
+
+
+
+        }
+      })
+    },
     register(){
       const  url = "auth/create-account";
 
       const formData =  new  FormData()
+
+      formData.append('roles',  this.form.roles)
+      formData.append('activities', this.form.activities)
       formData.append('firstName', this.form.firstName)
       formData.append('lastName', this.form.lastName)
       formData.append('otherName', this.form.otherName)
@@ -355,14 +423,12 @@ export default {
       formData.append('nationality',this.form.nationality)
       formData.append('stateOrigin',this.form.stateOrigin)
       formData.append('lgaOrigin',this.form.lgaOrigin)
-      formData.append('password',this.form.password)
       formData.append('anotherInstitution',this.form.anotherInstitution)
       formData.append('qualification',this.form.qualification)
       formData.append('membershipStatus',this.form.membershipStatus)
       formData.append('institution',this.form.institution)
       formData.append('dateAwarded',this.form.dateAwarded)
       formData.append('anotherDateAwarded',this.form.anotherDateAwarded)
-      formData.append('roles',this.form.roles)
       formData.append('files',this.$store.state.docs[0])
 
 
@@ -379,7 +445,7 @@ export default {
           // reset form
 
         //   goto login page
-          this.$router.push({ name: "Login" });
+          this.$router.push({ name: "Home" });
 
         })
         .catch((error) => {

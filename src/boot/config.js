@@ -76,6 +76,19 @@ Vue.mixin({
       return LocalStorage.getItem("session").token;
     },
 
+    //format the number to standard numerical format of using commas and dots
+    formatNumber(value){
+      let result = 0
+      if(isNaN(value)==true){
+        result = parseFloat(value)
+        return Intl.NumberFormat().format(result)
+      }
+      else {
+        return Intl.NumberFormat().format(value)
+      }
+
+    },
+
 
     getSession() {
       return LocalStorage.getItem("session").token;
