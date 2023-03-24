@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <!--    navigated breadcrumb-->
     <q-toolbar
       class="bg-transparent justify-center text-grey rounded-borders q-mb-sm q-mt-sm"
@@ -87,7 +87,7 @@
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
-                <q-item clickable class="col">
+                <q-item @click="openReceipt(props.row)" clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
                       class="avartar"
@@ -104,10 +104,8 @@
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
-                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>
-                    </q-item-label>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
+
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -225,10 +223,8 @@ box-sizing: border-box;
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
-                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>
-                    </q-item-label>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
+
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -452,13 +448,14 @@ box-sizing: border-box;
     </q-dialog>
 
     <!--    FAB-->
-
   </q-page>
+
 </template>
 
 <script>
 export default {
   data: () => ({
+    invoiceDetails: {},
     pending: [],
     paid: [],
     invoices: [],
@@ -466,6 +463,8 @@ export default {
       activities: [],
     },
     dialog: {
+      imagePreview: false,
+      pdfViewer: false,
       applyPermit: false,
       delete: false,
       deactivate: false,
@@ -506,6 +505,19 @@ export default {
 
 
   methods: {
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
+    // open receipt
+    openReceipt (receiptDetails) {
+      console.log(receiptDetails)
+      // this.invoiceDetails = receiptDetails
+      // this.dialog.view = true
+    },
 
     // get all categories
     getInvoice(){

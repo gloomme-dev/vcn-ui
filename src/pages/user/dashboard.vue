@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <!--    navigated breadcrumb-->
     <q-toolbar
       class="bg-transparent justify-center text-grey rounded-borders q-mb-sm q-mt-sm"
@@ -136,19 +136,29 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  formatNumber(props.row.paymentType[0].amount) }}</q-item-label>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
-                </q-item>
 
-                <q-item  class="">
-                  <q-item-section side>
+                  <q-item-section clickable v-if=" props.row.variableAmount !=true " side>
                     <q-btn  @click="generateInvoice(props.row)" flat fab-mini round icon="receipt" color="grey" >
                       <q-tooltip>Generate Invoice</q-tooltip>
                     </q-btn>
+                    <q-item-label caption>Generate Invoice</q-item-label>
+
 
                   </q-item-section>
+
+                  <q-item-section v-else side>
+
+                    <q-btn  @click="updateInvoice(props.row)" flat fab-mini round icon="receipt" color="grey" >
+                      <q-tooltip>Generate Invoice</q-tooltip>
+                    </q-btn>
+                    <q-item-label caption>Generate Invoice</q-item-label>
+                  </q-item-section>
+
                 </q-item>
+
               </div>
             </tr>
           </template>
@@ -205,7 +215,7 @@
           <q-item clickable class="col"  >
 
             <q-item-section>
-              <q-item-label><span>&#8358;</span> {{   formatNumber( totalAmount) }}</q-item-label>
+<!--              <q-item-label><span>&#8358;</span> {{   formatNumber( totalAmount) }}</q-item-label>-->
               <q-item-label caption>Total</q-item-label>
             </q-item-section>
           </q-item>
@@ -250,6 +260,145 @@
 
       </q-card>
     </q-dialog>
+<!--    update invoice -->
+    <q-dialog
+      v-model="dialog.updateInvoice"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style">
+        <q-toolbar class=" q-mt-xs bg-info">
+          <q-item clickable class="col"  >
+            <q-item-section>
+              <q-item-label>Premise  Permit    </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-separator inset vertical />
+          <q-item clickable class="col"  >
+
+            <q-item-section>
+              <q-item-label><span>&#8358;</span> {{   formatNumber( totalAmountList(paymentsSelect)) }}</q-item-label>
+              <q-item-label caption>Total</q-item-label>
+            </q-item-section>
+          </q-item>
+          <!--          </div>-->
+          <q-space />
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-card-section
+          class="row q-mt-sm justify-center row q-gutter-y-md col-md-8  q-gutter-x-md justify-around q-pa-sm"
+        >
+          <div class="col-md-5 card-input">
+            <q-input label="Organization"   type="text"   color="grey" v-model="permit.organizationName"   >
+              <template  v-slot:prepend>
+                <q-icon name="domain" />
+              </template>
+            </q-input>
+          </div>
+          <!--              CAC-->
+          <div class="col-md-5 col-xs-11 card-input">
+            <q-input label="CAC"   type="text"   color="grey" v-model="permit.cac"   >
+              <template  v-slot:prepend>
+                <q-icon name="pin" />
+              </template>
+            </q-input>
+          </div>
+          <!--          payments-->
+          <div class="col-md-10">
+            <label class="text-grey text-capitalize">Select Premise Acitivity </label>
+            <q-select
+              class="col-md-3"
+              outlined
+              use-chips
+              multiple
+              behavior="menu"
+              @input="getPaymentType(paymentsSelect)"
+              v-model="paymentsSelect"
+              :options="paymentTypes"
+              color="primary"
+              clearable
+              options-selected-class="text-primary"
+            >
+              <template v-slot:option="scope">
+                <q-item
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label > {{ scope.opt.paymentName }}</q-item-label>
+                    <q-item-label caption> {{ formatNumber( scope.opt.amount) }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset />
+              </template>
+              <template v-slot:selected-item="scope">
+                <q-chip
+
+
+                  color="secondary"
+                  text-color="white"
+                  class="q-my-none q-ml-xs q-mr-none"
+                >
+
+                  {{ scope.opt.paymentName }} -
+                  {{ formatNumber(scope.opt.amount) }}
+                </q-chip>
+              </template>
+            </q-select>
+          </div>
+
+          <!--              Address-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label="Address of practicing premises"   type="text"   color="grey" v-model="permit.addressPremises"   >
+              <template  v-slot:prepend>
+                <q-icon name="location_on" />
+              </template>
+            </q-input>
+          </div>
+          <!--              addtionalDetails-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label="Additional Details"   type="text"   color="grey" v-model="permit.addtionalDetails"   >
+              <template  v-slot:prepend>
+                <q-icon name="list" />
+              </template>
+            </q-input>
+          </div>
+
+          <!--              vcnNumber-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label=" Managing Director VCN Number"   type="text"   color="grey" v-model="permit.VCNNumber"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--              others-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input autogrow label="Others "   type="text"   color="grey" v-model="permit.others"   >
+              <template  v-slot:prepend>
+                <q-icon name="info" />
+              </template>
+            </q-input>
+          </div>
+          <!--              AffliatedTo-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label="Affiliated To"   type="text"   color="grey" v-model="permit.affliatedTo"   >
+              <template  v-slot:prepend>
+                <q-icon name="home_work" />
+              </template>
+            </q-input>
+          </div>
+
+        </q-card-section>
+        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg q-mt-md">
+          <q-btn unelevated style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Generate" v-close-popup @click="generateInv('hi')" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab
@@ -364,7 +513,22 @@ import axios from "axios";
 
 export default {
   data: () => ({
+    paymentList: [],
+    permit:{
+      appliedActivities: [],
+      paymentType: [],
+      invoiceStatus: "PENDING",
+      amount: 0,
+      inspectedBy: 0,
+      dateInspected: "",
+      dateApproved: "",
+      approvedBy: 0,
+      approved: false,
+      recommendation: ""
+    },
+    paymentsSelect: [],
     payment: {
+      paymentType: [],
       "userId": 0,
       "appliedActivities": [
         0
@@ -375,6 +539,7 @@ export default {
     activityObject: {
 
     },
+    paymentTypes: [],
     invoiceDetails: {
       "userId": 0,
       "appliedActivities": [],
@@ -397,6 +562,13 @@ export default {
     activities: [],
     isOpwd: true,
     user: {
+      roles: [
+        {
+          title: ""
+        }
+      ],
+      firstName: "",
+      lastName: "",
       newPassword: "",
       oldPassword: "",
       password: "",
@@ -405,6 +577,7 @@ export default {
       phone: ""
     },
     dialog: {
+      updateInvoice: false,
       payment:false,
       activity: false,
       view: false
@@ -429,28 +602,69 @@ export default {
   }),
   mounted() {
     this.getProfile();
-
-    // get user profile from localStorage JSON
-    // this.getActivities();
   },
   computed: {
-
-    // totalAmount is activityDetails.payments.amount
-    totalAmount() {
-      let total = 0
-      // for (let i = 0; i < this.invoiceDetails.paymentType.length; i++) {
-      //   total += this.invoiceDetails.paymentType[i].amount
-      // }
-      return total
-    },
   },
   methods: {
+    getPaymentType(row){
+      this.permit.paymentType = []
+      // forEach row map paymentType to paymentTypes
+      row.forEach((item) => {
+        this.permit.paymentType.push(item.id)
+      })
+      // this.permit.paymentType.push(row)
+    },
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      // this.amountTotal = total
+      return total
+    },
+    generateInv(row){
+      let url ="invoice/create-premise-invoice"
+      this.post(url, this.permit).then(response => {
+        this.$q.notify({
+          message: 'Invoice generated  successfully',
+          color: 'positive',
+          position: 'top',
+          icon: 'done'
+        })
+
+        //   move to invoice page
+        // this.$router.push({name: 'user-invoice'})
+
+      })
+        .catch(error => {
+          console.log(error);
+          this.$q.notify({
+            message: "Error creating invoice ",
+            color: "negative",
+            position: "top",
+            timeout: 2000
+          });
+        });
+    },
+    updateInvoice(row) {
+      this.paymentTypes = row.paymentType
+      this.permit.appliedActivities.push(row.id)
+      this.permit.invoiceStatus = "PENDING"
+
+
+
+      // this.permit.amount = this.totalAmountList(this.permit.paymentType)
+
+      this.dialog.updateInvoice =! this.dialog.updateInvoice
+    },
+
     generateInvoice(row) {
       this.invoiceDetails = row
       this.payment.appliedActivities = []
       let amount = 0
       for(let i = 0; i < this.invoiceDetails.paymentType.length; i++){
         amount += this.invoiceDetails.paymentType[i].amount
+        this.payment.paymentType.push(this.invoiceDetails.paymentType[i].id)
       }
       this.payment.amount = amount
       this.payment.userId =  this.user.id
@@ -459,6 +673,7 @@ export default {
 
       let url = "invoice/create";
 
+
       this.post(url, this.payment).then(response => {
         this.$q.notify({
           message: 'Invoice generated  successfully',
@@ -466,6 +681,10 @@ export default {
           position: 'top',
           icon: 'done'
         })
+
+      //   move to invoice page
+        this.$router.push({name: 'user-invoice'})
+
       })
         .catch(error => {
           console.log(error);
@@ -502,7 +721,6 @@ export default {
         let url = "activity/role/"+response.data.roles[0].id;
         this.get(url).then(res => {
 
-          console.log(res);
 
           this.activities = res.data;
         })
@@ -519,7 +737,6 @@ export default {
     getActivities() {
       let url = "activity/role/"+this.user.roles[0].id;
       this.get(url).then(response => {
-          console.log(response);
           this.activities = response.data;
         })
         .catch(error => {
@@ -537,7 +754,6 @@ export default {
       this.imgUploaded = localStorage.getItem('file')
       // return localStorage.getItem('file')
     },
-
     // get uploaded file from the file picker and save it as base64 on local storage
     onFilePicked (file) {
       this.$store.commit("addToDocs", file);
@@ -549,10 +765,8 @@ export default {
       }
 
     },
-
     // filter the countries array on the basis of the input value
     filterFn(val, update) {
-      console.log(val);
       if (val === '') {
         update(() => {
           this.countries = stringOptions
@@ -634,6 +848,13 @@ export default {
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.12);
 
+}
+.dialog-style{
+  width: 1105px;  height: 866px;
+  background: #FFFFFF;
+  box-shadow: -14px 30px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 .card-input{
   padding-left: 16px;

@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class=" ">
+  <q-layout view="lHh Lpr lFf" class=" bg-grey-1">
     <q-drawer
       side="left"
       behavior="desktop"
@@ -147,7 +147,23 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
+
+.tabs-container-bg{
+  background: rgba(118, 118, 128, 0.12);
+  border-radius: 8px;
+}
+
+.cust-tab{
+  margin-top: 3px;
+  padding-top: 2px;
+  height: 35px;
+  background: #FFFFFF;
+  border: 0.5px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  background-color: white;
+}
 
 q-drawer{
   background-color: #2264d1;

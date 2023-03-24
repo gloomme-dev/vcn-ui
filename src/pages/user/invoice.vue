@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding class="bg-grey-1">
     <!--    navigated breadcrumb-->
     <q-toolbar
       class="bg-transparent justify-center text-grey rounded-borders q-mb-sm q-mt-sm"
@@ -105,9 +105,8 @@
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">
-<!--                      <p>{{ activity.paymentType }}</p>-->
-                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>
+                    <q-item-label  class="" >
+                      <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
                     </q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
@@ -209,8 +208,13 @@ box-sizing: border-box;
                   <q-item-section>
                     <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">
                       <!--                      <p>{{ activity.paymentType }}</p>-->
-                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>
+                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{ props.row.appliedActivity }}</span>
                     </q-item-label>
+<!--                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">-->
+<!--                      &lt;!&ndash;                      <p>{{ activity.paymentType }}</p>&ndash;&gt;-->
+<!--                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>-->
+<!--                    </q-item-label>-->
+                    <q-item-label caption>Amount</q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -437,7 +441,13 @@ export default {
 
 
   methods: {
-
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
     makePayment(){
       const formData =  new  FormData()
       formData.append('user', this.invoice.user)
@@ -476,7 +486,6 @@ export default {
       this.invoice.invoice = row.id
 
     },
-
     // get all categories
     getInvoice(){
       const url = this.$route.meta.url
@@ -504,7 +513,6 @@ export default {
           // return error
         });
     },
-
     // apply for a permit
     apply(){
       const url = 'permit/create'
@@ -533,7 +541,6 @@ export default {
           // return error
         });
     },
-
     loadDefaultImage () {
       this.imgUploaded = ''
       this.model = null
@@ -545,7 +552,6 @@ export default {
       this.imgUploaded = localStorage.getItem('file')
       // return localStorage.getItem('file')
     },
-
     // get uploaded file from the file picker and save it as base64 on local storage
     onFilePicked (file) {
       this.$store.commit("addToDocs", file);
@@ -753,6 +759,22 @@ export default {
 </script>
 
 <style scoped>
+.tabs-container-bg{
+  background: rgba(118, 118, 128, 0.12);
+  border-radius: 8px;
+}
+
+.cust-tab{
+  margin-top: 3px;
+  padding-top: 2px;
+  height: 35px;
+  background: #FFFFFF;
+  border: 0.5px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  background-color: white;
+}
+
 .login-btn{
   background: #4461F2;
   box-shadow: 0px 12px 21px 4px rgba(68, 97, 242, 0.15);

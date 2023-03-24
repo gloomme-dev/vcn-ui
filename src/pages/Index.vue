@@ -162,8 +162,10 @@ export default {
 
           let userRoles = response.data.roles[0];
 
+          this.getProfile();
+
+
           if(userRoles){
-            this.getProfile();
 
             // this.$router.push({ name: "dashboard-user" });
             if(userRoles.authority==="VET"){

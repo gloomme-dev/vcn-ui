@@ -374,6 +374,13 @@ export default {
     }
   },
   methods: {
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
     getActivityRoles(model){
       this.form.activities = model.id
 
@@ -382,7 +389,6 @@ export default {
     getActivity () {
       let url = 'activity'
       this.get(url).then(response => {
-        console.log(response)
         if (response.data.length === 0) {
 
           this.$q.notify({

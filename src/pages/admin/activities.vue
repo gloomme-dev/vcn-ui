@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <!--    navigated breadcrumb-->
     <q-toolbar
       class="bg-transparent justify-center text-grey rounded-borders q-mb-sm q-mt-sm"
@@ -136,23 +136,11 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  formatNumber(props.row.paymentType[0].amount) }}</q-item-label>
+                    <q-item-label>{{ formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
 
-                <q-separator inset vertical />
-
-                <q-item clickable class="col">
-                  <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="description" />
-                  </q-item-section>
-
-                  <q-item-section>
-<!--                    <q-item-label>{{  props.row.payment[0].paymentType }}</q-item-label>-->
-                    <q-item-label caption>Type</q-item-label>
-                  </q-item-section>
-                </q-item>
 
                 <q-item  class="">
                   <q-item-section side>
@@ -530,6 +518,15 @@ export default {
 
 
   methods: {
+    totalAmountList(arr){
+      console.log(arr)
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
+
     // create activity
     createActivity() {
       // loop throuh the selected payments and push the id to the payment array
@@ -670,6 +667,7 @@ export default {
       }
       return total
     },
+
 
 
     // paymentIds () {

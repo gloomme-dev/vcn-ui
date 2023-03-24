@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <!--    navigated breadcrumb-->
     <q-toolbar
       class="bg-transparent justify-center text-grey rounded-borders q-mb-sm q-mt-sm"

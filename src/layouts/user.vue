@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class=" ">
+  <q-layout view="lHh Lpr lFf" class="bg-grey-1 ">
     <q-drawer
       side="left"
       behavior="desktop"
@@ -19,20 +19,16 @@
               class="bg-transparent  text-center q-gutter-y-lg  q-mt-md "
 
             >
-                    <span class="text-info text-weight-bolder">
-                  VCN <br>
-
-               </span>
-              <div class="absolute-bottom bg-transparent ">
+                         <div class="absolute-bottom bg-transparent ">
 
                 <q-avatar size=""  color="secondary" class="avartar">
                   <q-icon color="white" name="manage_accounts" />
                 </q-avatar>
                 <div class="text-weight-bold text-white q-mt-sm">
                   {{ user.firstName + ' ' + user.lastName }}
-<!--                  {{ user }}-->
                 </div>
-                <div class="text-primary"><q-chip square class="white-frost">Member</q-chip></div>
+                <div class="text-primary"><q-chip square class="white-frost">{{ user.roles[0].title  }}</q-chip></div>
+                <div class="text-primary"><q-chip color="white" outline class="">{{ user.membershipStatus ? 'Active' : 'Inactive'  }}</q-chip></div>
               </div>
             </q-card>
           </div>
@@ -45,13 +41,13 @@
             <q-item-section> Dashboard </q-item-section>
           </q-item>
 
-<!--          <q-item class="text-white" :to="{ name:'permit' }"  clickable v-ripple>-->
-<!--            <q-item-section avatar>-->
-<!--              <q-icon name="workspace_premium" />-->
-<!--            </q-item-section>-->
+          <q-item v-if="user.membershipStatus==true" class="text-white" :to="{ name:'permit' }"  clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="workspace_premium" />
+            </q-item-section>
 
-<!--            <q-item-section> Permits </q-item-section>-->
-<!--          </q-item>-->
+            <q-item-section> License </q-item-section>
+          </q-item>
 
           <q-item class="text-white" :to="{ name:'user-invoice' }"  clickable v-ripple>
             <q-item-section avatar>
@@ -108,7 +104,13 @@ export default {
   data() {
     return {
       invoices: [],
-      user: '',
+      user: {
+        roles: [
+          {
+            title: ""
+          }
+        ]
+      },
       left: false,
       update: false,
       // workbox: new Workbox('service-worker.js')
@@ -116,6 +118,28 @@ export default {
   },
 
   methods: {
+    getProfile() {
+      const url = "profile"
+      this.get(url)
+        .then((response) => {
+
+          this.user = response.data
+
+          //  save to local storage
+          localStorage.setItem('profile', JSON.stringify(response.data))
+          // this.profile = response.data
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$q.notify({
+            type: 'negative',
+            message: 'Cannot get user profile ',
+            actions: [
+              { icon: 'refresh', color: 'white', handler: () => {  } }
+            ]
+          })
+        });
+    },
     // get activities
     getActivities() {
       let url = "invoice"+"/"+LocalStorage.getItem("profile").id;
@@ -129,19 +153,16 @@ export default {
           console.log(error);
         });
     },
-
-    // updateApp () {
-    //   this.workbox.addEventListener('controlling', () => {
-    //     window.location.reload()
-    //   })
-    //   this.workbox.messageSkipWaiting()
-    // }
   },
 
   mounted() {
-    // load the profile from local storage and convert it to a JSON object
-
-  this.user = LocalStorage.getItem("profile");
+  //   if profile is not in local storage
+  if (!LocalStorage.getItem("profile")) {
+    this.getProfile()
+  }
+  else {
+    this.user = JSON.parse(LocalStorage.getItem("profile"))
+  }
 
 
   },
@@ -149,6 +170,23 @@ export default {
 </script>
 
 <style scoped>
+
+
+.tabs-container-bg{
+  background: rgba(118, 118, 128, 0.12);
+  border-radius: 8px;
+}
+
+.cust-tab{
+  margin-top: 3px;
+  padding-top: 2px;
+  height: 35px;
+  background: #FFFFFF;
+  border: 0.5px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  background-color: white;
+}
 
 q-drawer{
   background-color: #2264d1;

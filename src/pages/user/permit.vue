@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
 
     <!--    navigated breadcrumb-->
     <q-toolbar
@@ -475,7 +475,7 @@ export default {
     // get all permits
 
     getAllPermits(){
-      const url = 'permit'
+      const url = this.$route.meta.url
       this.get(url).then(response => {
         this.permits = response.data
         console.log(response)
