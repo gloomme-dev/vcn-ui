@@ -41,7 +41,7 @@ const routes = [
       {
         meta: { transitionName: 'slide-fade', title: 'Permit', back: 'dashboard-user',url: 'permit' , icon: 'workspace_premium', showToolBar: true, showButtonNav: true },
         path: "permit",
-        name: "permit",
+        name: "permit-user",
         component: () => import("pages/user/permit.vue"),
       },
       {

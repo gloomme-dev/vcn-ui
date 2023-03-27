@@ -13,7 +13,7 @@
         >
           <!--        Basic details-->
           <q-step
-            color="primary"
+            color="accent"
             :name="1"
             title="Biodata"
             icon="settings"
@@ -35,8 +35,8 @@
                   behavior="menu"
                   v-model="activitySelect"
                   :options="activities"
-                  color="primary"
-                  options-selected-class="text-primary"
+                  color="accent"
+                  options-selected-class="text-accent"
                 >
                   <template v-slot:option="scope">
                     <q-item
@@ -190,7 +190,7 @@
                 no-caps
                 flat
                 @click="step = 1"
-                color="primary"
+                color="accent"
                 label="Back"
                 class="q-ml-sm q-pr-sm"
               />
@@ -199,14 +199,14 @@
                 class="q-pl-sm q-pr-sm"
                 type="submit"
                 no-caps
-                color="primary"
+                color="accent"
                 label="Next"
               >
                  </q-btn>
             </q-stepper-navigation>
           </q-step>
           <q-step
-            color="primary"
+            color="accent"
             :name="2"
             title="Qualification"
             icon="school"
@@ -280,7 +280,7 @@
                 no-caps
                 flat
                 @click="step = 1"
-                color="primary"
+                color="accent"
                 label="Back"
                 class="q-ml-sm q-pr-sm"
               />
@@ -289,7 +289,7 @@
                 class="q-pl-sm q-pr-sm"
                 type="submit"
                 no-caps
-                color="primary"
+                color="accent"
                 label="Submit"
               >
               </q-btn>

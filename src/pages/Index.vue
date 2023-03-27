@@ -50,14 +50,14 @@
             </template>
           </q-input>
           <q-card-actions class="text-center q-gutter-y-lg justify-around">
-            <q-btn  @click="logUserIn"  no-caps  color="primary"  class="text-white full-width q-pa-sm login-btn"  label="Sign in" />
+            <q-btn  @click="logUserIn"  no-caps  color="accent"  class="text-white full-width q-pa-sm login-btn"  label="Sign in" />
             <q-btn unelevated  no-caps label=" Don't have an account?" />
 
             <q-btn
               :to="{ name: 'register' }"
               unelevated
               padding="xs lg"
-              text-color="orange"
+              text-color="accent"
               type="submit"
               no-caps
               size="md"

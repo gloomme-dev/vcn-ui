@@ -9,7 +9,7 @@
       :breakpoint="400"
       content-class="bg"
     >
-      <q-scroll-area class=" fit bg-secondary   " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
+      <q-scroll-area class=" fit bg-grey-9   " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
         <q-list style="height: 1000px; margin-top: 0px" fit padding class="  q-gutter-y-lg text-grey-7 glass-top-dark text-white menu-list q-pr-sm">
           <div class="text-center q-mt-lg q-mb-lg" >
 
@@ -43,13 +43,13 @@
             <q-item-section> Members </q-item-section>
           </q-item>
 
-<!--          <q-item class="text-white" :to="{ name:'permits-admin' }"  clickable v-ripple>-->
-<!--            <q-item-section avatar>-->
-<!--              <q-icon name="workspace_premium" />-->
-<!--            </q-item-section>-->
+          <q-item class="text-white" :to="{ name:'permits-admin' }"  clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="workspace_premium" />
+            </q-item-section>
 
-<!--            <q-item-section> Permits </q-item-section>-->
-<!--          </q-item>-->
+            <q-item-section> Permits </q-item-section>
+          </q-item>
 
           <q-item class="text-white"  :to="{ name:'transactions-admin' }"  clickable v-ripple>
             <q-item-section avatar>
@@ -166,7 +166,7 @@ export default {
 }
 
 q-drawer{
-  background-color: #2264d1;
+  background-color: #e9ecef;
 }
 
 .q-item.q-router-link--active, .q-item--active {
@@ -175,7 +175,7 @@ q-drawer{
   margin-right: 4px;
   margin-left: 8px;
   border-radius: 5px 5px 5px 5px;
-  background-color: #2264d1;
+  background-color: #f16521;
 }
 .q-tabs--active, .q-tabs--active{
   background-color: #2264d1;

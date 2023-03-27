@@ -14,7 +14,7 @@
         flat
         icon="workspace_premium"
       >
-        <q-badge color="secondary" floating>{{ allMembers.length }}</q-badge>
+        <q-badge color="secondary" floating>{{ permits.length }}</q-badge>
       </q-btn>
 
       <q-space />
@@ -57,11 +57,11 @@
       indicator-color="transparent"
       active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
     >
-      <q-tab class="text-grey" name="inactive" :label="'Pending '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ inActiveMembers.length  }}</q-badge>
+      <q-tab class="text-grey" name="pending" :label="'Pending '+ $route.meta.title" >
+        <q-badge color="red" floating>{{ pending.length  }}</q-badge>
       </q-tab>
-      <q-tab class="text-grey" name="resolved" :label="'Approved '+ $route.meta.title" >
-        <q-badge color="red" floating>{{ ActiveMembers.length  }}</q-badge>
+      <q-tab class="text-grey" name="approved" :label="'Approved '+ $route.meta.title" >
+        <q-badge color="red" floating>{{ approved.length  }}</q-badge>
       </q-tab>
     </q-tabs>
     <q-tab-panels
@@ -71,13 +71,13 @@
       transition-next="jump-down"
       class="bg-transparent text-white "
     >
-      <!--      Inactive Member-->
-      <q-tab-panel flat  name="inactive" class="bg-transparent row justify-center">
+      <!--      pending permit-->
+      <q-tab-panel flat  name="pending" class="bg-transparent row justify-center">
         <q-table
           flat
           class="bg-transparent rounded-borders row col-md-12 col-xs-12"
           :pagination="pagination"
-          :data="permits"
+          :data="pending"
           :filter="filter"
           hide-header
           grid-header
@@ -85,25 +85,6 @@
           dense
           row-key="id"
         >
-          <!--        <template v-slot:header="props">-->
-          <!--          <q-tr-->
-          <!--            class="bg-transparent rounded-borders q-mb-xs q-mt-xs"-->
-          <!--            style="max-width: 600px"-->
-          <!--            :props="props">-->
-          <!--            <div-->
-          <!--              class="row q-gutter-y-xs text-center  bg-white q-ma-sm "-->
-          <!--            >-->
-          <!--              <q-th-->
-          <!--                v-for="col in props.cols"-->
-          <!--                :key="col.name"-->
-          <!--                :props="props"-->
-          <!--                class=" text-purple col  text-left q-item  "-->
-          <!--              >-->
-          <!--                {{ col.label }}-->
-          <!--              </q-th>-->
-          <!--            </div>-->
-          <!--          </q-tr>-->
-          <!--        </template>-->
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
@@ -116,7 +97,7 @@
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="">{{ props.row.createdBy.firstName+ " "+props.row.createdBy.lastName }}</q-item-label>
+                    <q-item-label class="">{{ props.row.user.firstName+ " "+props.row.user.lastName }}</q-item-label>
                     <q-item-label caption>Applicant</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -131,7 +112,7 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.phone }}</q-item-label>
+                    <q-item-label>{{  props.row.user.phone }}</q-item-label>
                     <q-item-label caption>Phone</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -143,7 +124,7 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.createdBy.email }}</q-item-label>
+                    <q-item-label>{{  props.row.user.email }}</q-item-label>
                     <q-item-label caption>Email</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -158,6 +139,183 @@
                     <q-item-label caption>Organization</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
+
+                    <q-item-label caption>Amount</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label>{{  props.row.paymentType[0].paymentName }}</q-item-label>
+
+                    <q-item-label caption>Category</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label>{{  props.row.invoice.invoiceStatus }}</q-item-label>
+
+                    <q-item-label caption>Invoice Status</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item  class="">
+                  <q-item-section side>
+                    <q-btn flat fab-mini round icon="more_vert" color="grey" >
+                      <q-menu class="bg-transparent"
+                              style="min-width: 300px;
+                      box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;"
+                      >
+                        <q-list style="min-width: 200px;
+box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;">
+                          <q-item v-show="props.row.invoice.invoiceStatus === 'PAID'" clickable @click="approve(props.row)">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="grey"
+                                icon="task_alt"
+                              />
+                            </q-item-section>
+                            <q-item-section> Approve</q-item-section>
+                          </q-item>
+                          <q-item clickable>
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="secondary"
+                                icon="lock_open"
+                              />
+                            </q-item-section>
+                            <q-item-section> Reset Password</q-item-section>
+                          </q-item>
+                          <q-separator />
+                          <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="red"
+                                icon="delete_forever"
+                              />
+                            </q-item-section>
+                            <q-item-section> Delete</q-item-section>
+                          </q-item>
+
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+
+                  </q-item-section>
+                </q-item>
+              </div>
+            </tr>
+          </template>
+        </q-table>
+      </q-tab-panel>
+      <!--      approved permit-->
+      <q-tab-panel flat  name="approved" class="bg-transparent row justify-center">
+        <q-table
+          flat
+          class="bg-transparent rounded-borders row col-md-12 col-xs-12"
+          :pagination="pagination"
+          :data="approved"
+          :filter="filter"
+          hide-header
+          grid-header
+          sortOrder="da"
+          dense
+          row-key="id"
+        >
+          <template v-slot:body="props">
+            <tr class="bg-transparent rounded-borders " style="max-width: 600px">
+              <div class="row  justify-lg-center bg-white q-mt-xs row-record">
+                <q-item clickable class="col">
+                  <q-item-section top avatar>
+                    <q-avatar
+                      class="avartar"
+                      text-color="red"
+                      icon="person_search"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="">{{ props.row.user.firstName+ " "+props.row.user.lastName }}</q-item-label>
+                    <q-item-label caption>Applicant</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+
+
+                <q-separator inset vertical />
+                <q-item clickable class="col"  >
+                  <q-item-section top avatar>
+                    <q-avatar text-color="orange" icon="call" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{  props.row.user.phone }}</q-item-label>
+                    <q-item-label caption>Phone</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+                <!--            registered voters -->
+                <q-item clickable class="col">
+                  <q-item-section top avatar>
+                    <q-avatar text-color="purple" icon="mail" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{  props.row.user.email }}</q-item-label>
+                    <q-item-label caption>Email</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+                <q-item clickable class="col">
+                  <q-item-section top avatar>
+                    <q-avatar text-color="purple" icon="domain" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    <q-item-label>{{  props.row.organizationName }}</q-item-label>
+                    <q-item-label caption>Organization</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
+
+                    <q-item-label caption>Amount</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label>{{  props.row.paymentType[0].paymentName }}</q-item-label>
+
+                    <q-item-label caption>Category</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
 
                 <q-item  class="">
                   <q-item-section side>
@@ -220,6 +378,7 @@ box-sizing: border-box;
           </template>
         </q-table>
       </q-tab-panel>
+
     </q-tab-panels>
 
     <!--    Apply for Permit-->
@@ -377,6 +536,8 @@ box-sizing: border-box;
 <script>
 export default {
   data: () => ({
+    pending: [],
+    approved: [],
     permit:{
       activities: [],
     },
@@ -405,9 +566,9 @@ export default {
   }),
   mounted() {
     let url = 'users/'
-    this.getAllMembers(url)
+    // this.getAllMembers(url)
     this.getAllPermits()
-    this.getAllCategories()
+    // this.getAllCategories()
   },
 
   computed: {
@@ -424,6 +585,13 @@ export default {
 
 
   methods: {
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
 
     // get all categories
     getAllCategories(){
@@ -478,7 +646,12 @@ export default {
       const url = this.$route.meta.url
       this.get(url).then(response => {
         this.permits = response.data
-        console.log(response)
+        this.pending = response.data.filter((permit) => {
+          return permit.approved === false
+        })
+        this.approved = response.data.filter((permit) => {
+          return permit.approved === true
+        })
 
       })
         .catch((error) => {

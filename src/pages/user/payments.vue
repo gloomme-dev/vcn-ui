@@ -606,6 +606,8 @@ export default {
     getPayments(){
       const url = this.$route.meta.url
       this.get(url).then(response => {
+
+        console.log(response)
         this.payments = response.data
         //   map through the payments and push the pending and paid to their respective arrays
         this.payments.forEach((payment) => {
@@ -633,8 +635,6 @@ export default {
     },
 
     approve(row){
-
-      console.log(row)
 
       let id = 0
       // loop through row.receipts and get the id
@@ -676,40 +676,6 @@ export default {
     },
 
 
-
-    shareIncident (description, file) {
-      if (navigator.share) {
-        navigator.share({
-          title: 'Incident Report',
-          text: description,
-          url: file,
-        })
-          .then(() =>{
-            this.$q.notify({
-              message: 'Incident shared successfully',
-              color: 'positive',
-              position: 'top',
-              icon: 'done'
-            })
-          })
-          .catch((error) => {
-            this.$q.notify({
-              message: 'Error sharing incident',
-              color: 'negative',
-              position: 'top',
-              icon: 'warning'
-            })
-          });
-      } else {
-        this.$q.notify({
-          message: 'Web Share API is not supported in this browser.',
-          color: 'negative',
-          position: 'top',
-          icon: 'warning'
-        })
-      }
-    },
-
     // download image
     downloadImage(file) {
       const link = document.createElement('a');
@@ -717,91 +683,7 @@ export default {
       link.download = 'image.png';
       link.click();
     },
-    //exportCSV
-    exportAll() {
-      return this.unresolvedList.map((account) => {
-        const record = {};
-        record["Incident"] = account.title;
-        record["Description"] = account.description;
-        record["Reporter"] = account.firstName + " " + account.lastName,
-          record["Phone"] = account.phone;
-        record["PU"] = account.location;
-        record["Time"] = this.toDate(account.createdAt);
 
-        return record;
-      });
-    },
-    //generate pdf
-    generatePDFList() {
-      //columns for the generate PDF table
-      const columns = [
-        { title: "Incident ", dataKey: "incident" },
-        { title: "Description", dataKey: "description" },
-        { title: "Reporter", dataKey: "reporter" },
-        { title: "Phone", dataKey: "phone" },
-        { title: "PU", dataKey: "pu" },
-        { title: "Time", dataKey: "time" },
-
-      ];
-      const formattedData = this.unresolvedList.map((item, index) => {
-        return {
-          incident: item.title,
-          description: item.description,
-          reporter: item.firstName + " " + item.lastName,
-          phone: item.phone,
-          // lga: item.location.lga.name,
-          pu: item.location,
-          time: this.toDate(item.createdAt)
-        };
-      });
-      const doc = new jsPDF
-      ({
-        orientation: "portrait",
-        unit: "in",
-        format: "a4"
-      });
-
-      const title = this.$route.meta.title;
-      // const title = '';
-
-      // doc.addImage("img/ship.jpg", "JPEG", doc.internal.pageSize.width  / 1.5 , 0.4, 1, 1);
-      // doc.addImage("img/ship.jpg", "JPEG", doc.internal.pageSize.width  % 2 , 0.4, 1, 1);
-      doc.setFontSize(12).text(this.reportTypeHeader, 0.5, 1.6);
-      doc.setFontSize(12).text(this.dateHeader, 0.5, 1.9);
-      doc.setFontSize(12).text(title, 0.5, 2.1);
-      doc.setFontSize(12).text(this.totalHeader+" "+formattedData.length, 0.5, 3.1);
-      // create a line under heading
-      // doc.setLineWidth(0.01).line(0.5, 1.1, 8.0, 2.0);
-      // doc.line(20, 20, 60, 20); // horizontal line
-      // Using autoTable plugin
-      doc.autoTable({
-        // columns,
-        body: formattedData,
-        margin: { left: 0.5, top: 2.2 }
-      });
-
-      doc
-        .setFont("helvetica")
-        .setFontSize(12)
-
-
-      // Creating footer and saving file
-      doc
-        .setFont("times")
-        .setFontSize(11)
-        .setTextColor(0, 0, 255)
-        .text(
-          "Powered by Poll Monitor",
-          0.5,
-          doc.internal.pageSize.height - 0.5
-        )
-        .text(
-          "www.pollmonitor.com.ng",
-          0.5,
-          doc.internal.pageSize.height - 0.7
-        )
-        .save(`${this.reportTypeHeader +new Date().toDateString() }.pdf`);
-    },
     //delete
     deleteRow(row) {
       const query = "invoice/" + row.id;

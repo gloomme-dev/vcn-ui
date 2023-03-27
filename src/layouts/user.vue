@@ -9,7 +9,7 @@
       :breakpoint="400"
       content-class="bg"
     >
-      <q-scroll-area class=" fit bg-primary   " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
+      <q-scroll-area class=" fit bg-grey-9    " style="height: calc(100% - 190px); margin-top: 0px; border-radius: 0px 14.17px 14.17px 0px;">
         <q-list style="height: 1000px; margin-top: 0px" fit padding class="  q-gutter-y-lg text-grey-7 glass-top-dark text-white menu-list">
           <div class="text-center q-mt-lg q-mb-lg" >
 
@@ -41,13 +41,21 @@
             <q-item-section> Dashboard </q-item-section>
           </q-item>
 
-          <q-item v-if="user.membershipStatus==true" class="text-white" :to="{ name:'permit' }"  clickable v-ripple>
+          <q-item class="text-white" :to="{ name:'permit-user' }"  clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="workspace_premium" />
             </q-item-section>
 
-            <q-item-section> License </q-item-section>
+            <q-item-section> Permits </q-item-section>
           </q-item>
+
+<!--          <q-item v-if="user.membershipStatus==true" class="text-white" :to="{ name:'permit-user' }"  clickable v-ripple>-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon name="workspace_premium" />-->
+<!--            </q-item-section>-->
+
+<!--            <q-item-section> License </q-item-section>-->
+<!--          </q-item>-->
 
           <q-item class="text-white" :to="{ name:'user-invoice' }"  clickable v-ripple>
             <q-item-section avatar>
@@ -66,15 +74,6 @@
 
             <q-item-section> Payments </q-item-section>
           </q-item>
-
-          <q-item class="text-white"   clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="sync" />
-            </q-item-section>
-
-            <q-item-section> Renewal </q-item-section>
-          </q-item>
-
 
 
           <q-item class="text-white" @click="logUserOut" clickable v-ripple>
@@ -197,7 +196,7 @@ q-drawer{
   padding-right: 12px;
   margin-right: 4px;
   border-radius: 0 5px 5px 0;
-  background-color: #2264d1;
+  background-color: #f16521;
 }
 .q-tabs--active, .q-tabs--active{
   background-color: #2264d1;

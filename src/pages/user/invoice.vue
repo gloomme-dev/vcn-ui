@@ -206,28 +206,18 @@ box-sizing: border-box;
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
-                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{ props.row.appliedActivity }}</span>
-                    </q-item-label>
-<!--                    <q-item-label v-for="(activity, index) in props.row.appliedActivity" class="" :key="index">-->
-<!--                      &lt;!&ndash;                      <p>{{ activity.paymentType }}</p>&ndash;&gt;-->
-<!--                      <span  v-for="(payment, index) in activity.paymentType" :key="index">{{payment.amount }}</span>-->
-<!--                    </q-item-label>-->
-                    <q-item-label caption>Amount</q-item-label>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.paymentType)) }}</q-item-label>
+
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
-
                 <q-item clickable class="col">
                   <q-item-section>
                     <q-item-label >  {{ props.row.invoiceStatus }}</q-item-label>
                     <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
-
-
 
                 <q-item  class="">
                   <q-item-section side>
@@ -466,6 +456,8 @@ export default {
               { icon: 'refresh', color: 'white', handler: () => {  } }
             ]
           })
+
+        //  move invoice to the paid array
 
         })
         .catch((error) => {

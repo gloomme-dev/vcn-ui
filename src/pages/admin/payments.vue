@@ -106,11 +106,8 @@
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label><span>&#8358;</span>
-                      {{ props.row.invoice.appliedActivity[0].paymentType[0].amount }}
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.invoice.paymentType)) }}</q-item-label>
 
-                    </q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -147,7 +144,7 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item clickable @click="approve(props.row)">
+                          <q-item v-close-popup clickable @click="approve(props.row)">
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
@@ -160,7 +157,7 @@ box-sizing: border-box;
                           </q-item>
                           <q-separator />
 
-                          <q-item clickable @click="approveMembership(props.row)">
+                          <q-item v-close-popup clickable @click="approveMembership(props.row)">
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
@@ -174,7 +171,7 @@ box-sizing: border-box;
 
 
                           <q-separator />
-                          <q-item clickable >
+                          <q-item v-close-popup clickable >
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
@@ -233,7 +230,7 @@ box-sizing: border-box;
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
-                <q-item clickable class="col">
+                <q-item @click="openReceipt(props.row)" clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
                       class="avartar"
@@ -250,11 +247,7 @@ box-sizing: border-box;
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label><span>&#8358;</span>
-                      {{ props.row.invoice.appliedActivity[0].paymentType[0].amount }}
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
-
-                    </q-item-label>
+                    <q-item-label><span>&#8358;</span>{{  formatNumber(totalAmountList(props.row.invoice.paymentType)) }}</q-item-label>
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -503,7 +496,100 @@ box-sizing: border-box;
         </q-form>
       </q-card>
     </q-dialog>
+    <!--image preview dialog-->
+    <q-dialog
+      :maximized= "$q.screen.lt.sm ? true : false"
+      transition-show="jump-up"
+      transition-hide="jump-down"
+      v-model="dialog.imagePreview" >
+      <q-card :class="$q.screen.lt.sm ? '': 'img-preview-desktop' "  dark class=" ">
+        <q-toolbar
+          transition-show="jump-up"
+          transition-hide="jump-down"
+          v-if="showToolBar"  class="bg-white text-grey-8 bg-transparent ">
+          <!--  <p>{{ chatItemHeader }}</p>-->
+          <q-btn fab-mini unelevated v-close-popup icon="close"  />
+          <q-space />
+          <q-btn @click="clickedDownload(previewedFile.name,previewedFile)" flat round dense icon="cloud_download" />
+          <!--        <q-btn flat round dense icon="edit" />-->
+          <q-btn @click="dialog.foward =! dialog.foward" flat round dense icon="forward" />
+          <q-btn class="mobile-only" flat round dense icon="share" />
+        </q-toolbar>
+        <div class="  q-pa-none items-center row ">
+          <q-img
 
+            @click="showToolBar =! showToolBar "
+            class="q-mt-xl"
+            :src="previewedFile.fileUrl" />
+        </div>
+      </q-card>
+    </q-dialog>
+    <q-dialog
+      transition-show="jump-up"
+      transition-hide="jump-down"
+      v-model="dialog.imagePreview" >
+      <q-card   dark class=" ">
+        <q-toolbar
+          transition-show="jump-up"
+          transition-hide="jump-down"
+        class="bg-white text-grey-8 bg-transparent ">
+          <!--  <p>{{ chatItemHeader }}</p>-->
+          <q-btn fab-mini unelevated v-close-popup icon="close"  />
+          <q-space />
+          <q-btn @click="clickedDownload(previewedFile.name,previewedFile)" flat round dense icon="cloud_download" />
+          <!--        <q-btn flat round dense icon="edit" />-->
+          <q-btn @click="dialog.foward =! dialog.foward" flat round dense icon="forward" />
+          <q-btn class="mobile-only" flat round dense icon="share" />
+        </q-toolbar>
+          <q-img
+            class="q-mt-xl"
+            :src="'data:'+previewedFile.type+';base64,'+previewedFile.file" />
+      </q-card>
+    </q-dialog>
+
+    <!--  view dialog pdf-->
+    <q-dialog
+      :maximized= "$q.screen.lt.sm ? true : false"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      v-model="dialog.pdfViewer">
+      <q-card :class="$q.screen.lt.sm ? '': 'img-preview-desktop' "  dark class=" ">
+        <q-toolbar class=" q-mt-xs list-item-s">
+          <q-item class="">
+            <q-item-section avatar>
+              <q-avatar color="grey-2" >
+                <q-btn text-color="red" flat round color="grey"  dense icon="picture_as_pdf" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label caption>{{ pdfDetails.name }}</q-item-label>
+              <q-item-label caption>{{ pdfDetails.size +' | '+pdfDetails.date }}</q-item-label>
+            </q-item-section>
+            <q-space />
+            <q-item-section side top>
+              <!--            <q-badge class="text-capitalize"   :label="pdfDetails.status" color="primary"-->
+              <!--            />-->
+            </q-item-section>
+          </q-item>
+          <q-space />
+          <q-btn  flat round dense icon="cloud_download" />
+          <q-btn flat color="grey-7" round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-card-section class="row">
+          <div style="height: 1200px"  class="col-md-8">
+            <q-pdfviewer
+              v-model="show"
+              type="html5"
+              :src="updatedSrc"
+              content-style="background-color: #ffff"
+              content-class="absolute"
+              inner-content-style="background-color: #ffff"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <!--    FAB-->
 
   </q-page>
@@ -512,6 +598,19 @@ box-sizing: border-box;
 <script>
 export default {
   data: () => ({
+    showToolBar: true,
+    previewedFile: {
+      file: "",
+      type: "",
+      name: ""
+    },
+    show: true,
+    pdfDetails: {
+      name: '',
+      size: '',
+      date: '',
+      status: ''
+    },
     receiptDetails: {
     },
     payments: [],
@@ -522,6 +621,8 @@ export default {
       activities: [],
     },
     dialog: {
+      pdfViewer: false,
+      imagePreview  : false,
       applyPermit: false,
       delete: false,
       deactivate: false,
@@ -549,6 +650,12 @@ export default {
   },
 
   computed: {
+    updatedSrc () {
+      if (process.env.MODE === 'electron') {
+        return '/' + this.src
+      }
+      return this.src
+    },
     activitiesId () {
       return this.permit.activities.map((activity) => {
         return activity.id
@@ -562,6 +669,13 @@ export default {
 
 
   methods: {
+    totalAmountList(arr){
+      let total = 0
+      for (let i = 0; i < arr.length; i++) {
+        total += arr[i].amount
+      }
+      return total
+    },
 
     approveMembership(row){
 
@@ -586,12 +700,26 @@ export default {
 
     // open receipt
     openReceipt (row) {
+      console.log(row)
       let id = 0
+      let fileType = ''
+      let file = ''
       // loop through row.receipts and get the id
       row.receipts.forEach((receipt) => {
         id = receipt.id
+        fileType = receipt.type
+        file = receipt.file
         // console.log(receipt.id)
       })
+      if(fileType=== 'image/jpeg' || fileType === 'image/png') {
+        this.previewedFile.file = file
+        this.previewedFile.type = fileType
+        this.previewedFile.name = row.name
+        this.dialog.imagePreview = true
+      }
+      else {
+        this.$router.push({name: 'viewPdf', params: {id: id}})
+      }
       // loop through row.receipts
     },
 
@@ -602,9 +730,9 @@ export default {
         this.payments = response.data
       //   map through the payments and push the pending and paid to their respective arrays
         this.payments.forEach((payment) => {
-          if(payment.status === 'PENDING'){
+          if(payment.invoice.invoiceStatus === 'PENDING'){
             this.pending.push(payment)
-          }else if(payment.status === 'PAID'){
+          }else if(payment.invoice.invoiceStatus === 'PAID'){
             this.paid.push(payment)
           }
         })
@@ -654,6 +782,7 @@ export default {
               textColor: 'white'
             })
           }, 500)
+
         })
         .catch((error) => {
           console.log(error);

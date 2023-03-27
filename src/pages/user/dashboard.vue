@@ -308,12 +308,11 @@
           </div>
           <!--          payments-->
           <div class="col-md-10">
-            <label class="text-grey text-capitalize">Select Premise Acitivity </label>
+            <label class="text-grey text-capitalize">Select Premise Activity </label>
             <q-select
               class="col-md-3"
               outlined
               use-chips
-              multiple
               behavior="menu"
               @input="getPaymentType(paymentsSelect)"
               v-model="paymentsSelect"
@@ -523,7 +522,6 @@ export default {
       dateInspected: "",
       dateApproved: "",
       approvedBy: 0,
-      approved: false,
       recommendation: ""
     },
     paymentsSelect: [],
@@ -607,11 +605,11 @@ export default {
   },
   methods: {
     getPaymentType(row){
-      this.permit.paymentType = []
+      this.permit.paymentType.push(row.id)
       // forEach row map paymentType to paymentTypes
-      row.forEach((item) => {
-        this.permit.paymentType.push(item.id)
-      })
+      // row.forEach((item) => {
+      //   this.permit.paymentType.push(item.id)
+      // })
       // this.permit.paymentType.push(row)
     },
     totalAmountList(arr){

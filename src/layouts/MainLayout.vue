@@ -8,7 +8,7 @@
         <q-avatar    size="44px" >
           <q-img style="width: 70%" :ratio="1" alt="logo"  src="img/logo.png" />
         </q-avatar>
-        <q-toolbar-title class="text-primary text-weight-bolder">
+        <q-toolbar-title class="text-accent text-weight-bolder">
           Veterinary Council of Nigeria
         </q-toolbar-title>
 
