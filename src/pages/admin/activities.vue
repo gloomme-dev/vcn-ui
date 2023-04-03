@@ -519,7 +519,6 @@ export default {
 
   methods: {
     totalAmountList(arr){
-      console.log(arr)
       let total = 0
       for (let i = 0; i < arr.length; i++) {
         total += arr[i].amount
@@ -604,7 +603,6 @@ export default {
             message: 'No more records found'
           })
         } else {
-          console.log(response)
           this.activities = response.data
 
         }

@@ -81,6 +81,7 @@
           :filter="filter"
           hide-header
           grid-header
+          :columns="columns"
           sortOrder="da"
           dense
           row-key="id"
@@ -194,7 +195,7 @@ box-sizing: border-box;
           </template>
         </q-table>
       </q-tab-panel>
-<!--      ARROVED Payments-->
+<!--      Approved Payments-->
       <q-tab-panel flat  name="paid" class="bg-transparent row justify-center">
         <q-table
           flat
@@ -203,6 +204,7 @@ box-sizing: border-box;
           :data="paid"
           :filter="filter"
           hide-header
+          :columns="columns"
           grid-header
           sortOrder="da"
           dense
@@ -598,6 +600,12 @@ box-sizing: border-box;
 <script>
 export default {
   data: () => ({
+    columns: [
+      { name: 'name', align: 'left', label: 'LGA', field: row => row.invoice.appliedActivity[0].activityName, sortable: true },
+      { name: 'amount', align: 'left', label: 'Amount', field: 'amount', sortable: true },
+      { name: 'status', align: 'left', label: 'Status', field: row => row.invoice.invoiceStatus, sortable: true },
+      { name: 'member', align: 'left', label: 'member', field: row => row.user.firstName + ' ' + row.user.lastName, sortable: true }
+    ],
     showToolBar: true,
     previewedFile: {
       file: "",

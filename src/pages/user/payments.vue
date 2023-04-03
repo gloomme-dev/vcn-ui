@@ -417,7 +417,7 @@ box-sizing: border-box;
       <q-card
         ref="testHtml"
         class="rounded-borders dark-frost q-pa-sm dialog-style">
-        <q-toolbar class=" justfy-around q-mt-xs q-gutter-x-md">
+        <q-toolbar class=" justify-around q-mt-xs q-gutter-x-md">
           <q-btn flat round dense :icon="$route.meta.icon" />
           <div class="text-h5">Apply for a {{ $route.meta.title }}</div>
           <q-space />
@@ -546,6 +546,17 @@ box-sizing: border-box;
     </q-dialog>
 
     <!--    FAB-->
+    <!--    FAB-->
+    <q-page-sticky position="bottom-right" :offset="[20, 60]">
+      <q-fab
+        icon="add"
+        direction="up"
+        color="primary"
+        vertical-actions-align="right"
+      >
+        <q-fab-action  @click="dialog.applyPermit = ! dialog.applyPermit" label-position="right" label="Apply" color="secondary" :icon="$route.meta.icon" />
+      </q-fab>
+    </q-page-sticky>
 
   </q-page>
 </template>
@@ -601,6 +612,8 @@ export default {
 
 
   methods: {
+
+
 
     // get all categories
     getPayments(){
@@ -793,6 +806,7 @@ export default {
   border-radius: 10px;
 
 }
+
 .card-input{
   padding-left: 16px;
   padding-right: 16px;

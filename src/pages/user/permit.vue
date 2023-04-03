@@ -161,9 +161,9 @@
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label>{{  props.row.invoice.invoiceStatus }}</q-item-label>
+                    <q-item-label>{{  props.row.invoiceGenerationStatus == false ? 'Not yet approved ':' Approved'  }}</q-item-label>
 
-                    <q-item-label caption>Invoice Status</q-item-label>
+                    <q-item-label caption>Invoice Generate Status</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
@@ -183,28 +183,14 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item v-show="props.row.invoice.invoiceStatus === 'PAID'" clickable @click="approve(props.row)">
-                            <q-item-section top avatar>
-                              <q-avatar
-                                color="secondary-1"
-                                class="avartar"
-                                text-color="grey"
-                                icon="task_alt"
-                              />
-                            </q-item-section>
-                            <q-item-section> Approve</q-item-section>
-                          </q-item>
-                          <q-item clickable>
-                            <q-item-section top avatar>
-                              <q-avatar
-                                color="secondary-1"
-                                class="avartar"
-                                text-color="secondary"
-                                icon="lock_open"
-                              />
-                            </q-item-section>
-                            <q-item-section> Reset Password</q-item-section>
-                          </q-item>
+                          <q-item-section clickable v-if="props.row.invoiceGenerationStatus == true " side>
+                            <q-btn  @click="generateInvoice(props.row)" flat fab-mini round icon="receipt" color="grey" >
+                              <q-tooltip>Generate Invoice</q-tooltip>
+                            </q-btn>
+                            <!--                    <q-item-label caption>Generate Invoice</q-item-label>-->
+
+
+                          </q-item-section>
                           <q-separator />
                           <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
                             <q-item-section top avatar>
@@ -315,7 +301,6 @@ box-sizing: border-box;
                     <q-item-label caption>Category</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-separator inset vertical />
 
                 <q-item  class="">
                   <q-item-section side>
@@ -332,16 +317,16 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item clickable @click="account = props.row, dialog.deactivate = ! dialog.deactivate">
+                          <q-item @click="generateInvoice(props.row)" clickable >
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
                                 class="avartar"
-                                text-color="red"
-                                icon="block"
+                                text-color="primary"
+                                icon="task_alt"
                               />
                             </q-item-section>
-                            <q-item-section> Deactivate</q-item-section>
+                            <q-item-section> Generate Invoice</q-item-section>
                           </q-item>
                           <q-item clickable>
                             <q-item-section top avatar>
@@ -349,13 +334,13 @@ box-sizing: border-box;
                                 color="secondary-1"
                                 class="avartar"
                                 text-color="secondary"
-                                icon="lock_open"
+                                icon="edit"
                               />
                             </q-item-section>
-                            <q-item-section> Reset Password</q-item-section>
+                            <q-item-section> Update</q-item-section>
                           </q-item>
                           <q-separator />
-                          <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
+                          <q-item clickable >
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
@@ -553,7 +538,7 @@ export default {
     fabRight: false,
      permits: [],
     allMembers: [],
-    tab: 'inactive',
+    tab: 'pending',
     loading: true,
     pagination: {
       sortBy: 'timestamp',
@@ -585,6 +570,39 @@ export default {
 
 
   methods: {
+    generateInvoice(row){
+
+      let amount = this.totalAmountList(row.paymentType)
+      let data = {
+        amount: amount,
+        permitId: row.id,
+      }
+      const url = 'invoice/generate-premise-invoice'
+      this.post(url, data).then(response => {
+        this.$q.notify({
+          color: 'green-4',
+          textColor: 'white',
+          icon: 'check_circle',
+          message: 'Permit approved'
+        })
+
+        //   move in approved
+        this.approved.push(row)
+        this.pending.splice(this.pending.indexOf(row), 1)
+
+      })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'Can not approve permit'
+          })
+          // return error
+        });
+    },
     totalAmountList(arr){
       let total = 0
       for (let i = 0; i < arr.length; i++) {
@@ -647,10 +665,10 @@ export default {
       this.get(url).then(response => {
         this.permits = response.data
         this.pending = response.data.filter((permit) => {
-          return permit.approved === false
+          return permit.invoiceGenerationStatus === false
         })
         this.approved = response.data.filter((permit) => {
-          return permit.approved === true
+          return permit.invoiceGenerationStatus === true
         })
 
       })

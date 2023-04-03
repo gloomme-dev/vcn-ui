@@ -327,7 +327,7 @@ box-sizing: border-box;
               </template>
             </q-select>
           </div>
-          <!--        Local Goverment area-->
+          <!--        Local Government area-->
           <div class="col-md-6 col-xs-11 card-input">
             <q-select     label="Local Government Area"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="staffForm.lgaOrigin" :options="lga_of_origin" >
               <template v-slot:prepend>
@@ -370,6 +370,7 @@ export default {
     staff: [],
     staffForm: {
       roles: [],
+      vcnNumber: "",
       "firstName": "",
       "lastName": "",
       "otherName": "",

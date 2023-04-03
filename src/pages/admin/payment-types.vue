@@ -93,19 +93,8 @@
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{   formatNumber( props.row.amount) }}</q-item-label>
+                    <q-item-label><span>&#8358;</span>{{   formatNumber( props.row.amount) }}</q-item-label>
                     <q-item-label caption>Amount</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator inset vertical />
-                <q-item clickable class="col">
-                  <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="account_balance" />
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>{{  props.row.paymentType }}</q-item-label>
-                    <q-item-label caption>Type</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
@@ -306,7 +295,7 @@ export default {
   methods: {
     // createPayment
     createPayment () {
-      let url = 'payment/create'
+      let url = this.$route.meta.url+'/create'
       this.payment.amount = parseInt(this.payment.amount)
       this.post(url, this.payment).then(response => {
         this.payments.unshift(response.data)

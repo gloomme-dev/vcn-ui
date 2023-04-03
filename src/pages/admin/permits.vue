@@ -159,11 +159,69 @@
                 </q-item>
                 <q-separator inset vertical />
 
-                <q-item clickable class="col">
-                  <q-item-section>
-                    <q-item-label>{{  props.row.invoice.invoiceStatus }}</q-item-label>
+<!--                <q-item clickable class="col">-->
+<!--                  <q-item-section>-->
+<!--                    <q-item-label>{{  props.row.invoice.invoiceStatus }}</q-item-label>-->
 
-                    <q-item-label caption>Invoice Status</q-item-label>
+<!--                    <q-item-label caption>Invoice Status</q-item-label>-->
+<!--                  </q-item-section>-->
+<!--                </q-item>-->
+<!--                <q-separator inset vertical />-->
+
+                <q-item  class="">
+                  <q-item-section side>
+                    <q-btn flat fab-mini round icon="more_vert" color="grey" >
+                      <q-menu class="bg-transparent"
+                              style="min-width: 300px;
+                      box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;"
+                      >
+                        <q-list style="min-width: 200px;
+box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;">
+                          <q-item v-show="props.row.invoiceGenerationStatus == false" clickable @click="approveInvoiceGeneration(props.row)">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="grey"
+                                icon="task_alt"
+                              />
+                            </q-item-section>
+                            <q-item-section> Approve</q-item-section>
+                          </q-item>
+                          <q-item clickable>
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="secondary"
+                                icon="lock_open"
+                              />
+                            </q-item-section>
+                            <q-item-section> Reset Password</q-item-section>
+                          </q-item>
+                          <q-separator />
+                          <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="red"
+                                icon="delete_forever"
+                              />
+                            </q-item-section>
+                            <q-item-section> Delete</q-item-section>
+                          </q-item>
+
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+
                   </q-item-section>
                 </q-item>
               </div>
@@ -255,6 +313,64 @@
                     <q-item-label>{{  props.row.paymentType[0].paymentName }}</q-item-label>
 
                     <q-item-label caption>Category</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset vertical />
+
+                <q-item  class="">
+                  <q-item-section side>
+                    <q-btn flat fab-mini round icon="more_vert" color="grey" >
+                      <q-menu class="bg-transparent"
+                              style="min-width: 300px;
+                      box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;"
+                      >
+                        <q-list style="min-width: 200px;
+box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
+  border-radius: 12px;">
+                          <q-item clickable @click="account = props.row, dialog.deactivate = ! dialog.deactivate">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="red"
+                                icon="block"
+                              />
+                            </q-item-section>
+                            <q-item-section> Deactivate</q-item-section>
+                          </q-item>
+                          <q-item clickable>
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="secondary"
+                                icon="lock_open"
+                              />
+                            </q-item-section>
+                            <q-item-section> Reset Password</q-item-section>
+                          </q-item>
+                          <q-separator />
+                          <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="red"
+                                icon="delete_forever"
+                              />
+                            </q-item-section>
+                            <q-item-section> Delete</q-item-section>
+                          </q-item>
+
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+
                   </q-item-section>
                 </q-item>
               </div>
@@ -495,6 +611,36 @@ export default {
           // return error
         });
     },
+    approveInvoiceGeneration(row){
+      const data = {
+        invoiceGeneration: true
+      }
+      const url = this.$route.meta.url+'/approve-invoice-gen/'+row.id+'/true'
+      this.post(url, data).then(response => {
+        this.$q.notify({
+          color: 'green-4',
+          textColor: 'white',
+          icon: 'check_circle',
+          message: 'Permit approved'
+        })
+
+        //   move in approved
+        this.approved.push(row)
+        this.pending.splice(this.pending.indexOf(row), 1)
+
+      })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'Can not approve permit'
+          })
+          // return error
+        });
+    },
     totalAmountList(arr){
       let total = 0
       for (let i = 0; i < arr.length; i++) {
@@ -528,7 +674,6 @@ export default {
       const url = 'permit/create'
       this.permit.premiseActivityCategories = this.activitiesId
       this.post(url, this.permit).then(response => {
-        console.log(response)
         this.$q.notify({
           color: 'green-4',
           textColor: 'white',
@@ -555,13 +700,12 @@ export default {
     getAllPermits(){
       const url = this.$route.meta.url+'/all'
       this.get(url).then(response => {
-        console.log(response)
         this.permits = response.data
         this.pending = response.data.filter((permit) => {
-          return permit.approved === false
+          return permit.invoiceGenerationStatus === false
         })
         this.approved = response.data.filter((permit) => {
-          return permit.approved === true
+          return permit.invoiceGenerationStatus === true
         })
 
       })

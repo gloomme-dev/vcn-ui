@@ -3,7 +3,7 @@ import axios from 'axios'
 import { LocalStorage } from "quasar";
 
 
-// const url = "https://monkfish-app-fonzu.ondigitalocean.app/api/";
+// const url = "https://api.crater365.net/api/";
 const url = "http://localhost:8080/api/";
 
 const config = {
@@ -27,7 +27,11 @@ Vue.mixin({
       return api.get(url + id);
     },
     put(id, data) {
-      // api.defaults.headers.common['Authorization'] = `Bearer ${LocalStorage.getItem('token') !== null ? LocalStorage.getItem('token') : ''}`
+      api.defaults.headers.common["Authorization"] = `Bearer ${
+        LocalStorage.getItem("token") !== null
+          ? LocalStorage.getItem("token")
+          : ""
+      }`;
 
       return api.put(url + id, data);
     },

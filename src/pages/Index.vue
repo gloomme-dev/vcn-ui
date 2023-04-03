@@ -174,6 +174,9 @@ export default {
             else if(userRoles.authority==="ADMIN"){
               this.$router.push({ name: "members-admin" });
             }
+            else if(userRoles.authority==="CO-ORDINATOR"){
+              this.$router.push({ name: "members-admin" });
+            }
             else if(userRoles.authority==="PARA"){
               this.$router.push({ name: "member-dashboard" });
             }
