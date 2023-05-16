@@ -119,6 +119,14 @@
                     <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label >  {{ props.row.rrr }}</q-item-label>
+                    <q-item-label caption>RRR</q-item-label>
+                  </q-item-section>
+                </q-item>
 
 
 
@@ -137,7 +145,7 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item clickable @click="processPayment(props.row)">
+                          <q-item v-close-popup clickable @click="makePayment(props.row.rrr)">
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
@@ -367,10 +375,12 @@ box-sizing: border-box;
     </q-page-sticky>
   </q-page>
 </template>
+<script type="text/javascript" src="https://remitademo.net/payment/v1/remita-pay-inline.bundle.js"></script>
 
 <script>
 export default {
   data: () => ({
+    rrr: '',
     pending: [],
     paid: [],
     invoices: [],
@@ -415,6 +425,10 @@ export default {
   }),
   mounted() {
     this.getInvoice()
+    const script = document.createElement("script");
+    script.src = "https://remitademo.net/payment/v1/remita-pay-inline.bundle.js";
+    script.async = true;
+    document.head.appendChild(script)
   },
 
   computed: {
@@ -431,6 +445,32 @@ export default {
 
 
   methods: {
+    makePayment(rrr) {
+      const paymentEngine = RmPaymentEngine.init({
+        key: 'S1VESXwzMjk3NTY0MnxiNmMwZTRmN2Q3OTg5ZjE0NWY5YzMzYWI2NDI1NGFjNTlmN2YwYzVjMDc3ZjE2ZTEwNjc3NTIwZjcwYmQ1Njk0ODU3YTU4YzIxZWEyMDkzZjYwZGE0ZGM4ZDI4NjBkMGQ1NmFjY2FkOGEzN2M1MTQxNDljN2JkZjI4OGU4MmZmMg==',
+        processRrr: true,
+        transactionId: Math.floor(Math.random() * 1101233),
+        extendedData: {
+          customFields: [{
+            name: 'rrr',
+            value: rrr,
+          }]
+        },
+        onSuccess: function(response) {
+          console.log('callback Successful Response', response);
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', 'https://remita.net/');
+          xhr.send();
+        },
+        onError: function(response) {
+          console.log('callback Error Response', response);
+        },
+        onClose: function() {
+          console.log('closed');
+        }
+      });
+      paymentEngine.showPaymentWidget();
+    },
     totalAmountList(arr){
       let total = 0
       for (let i = 0; i < arr.length; i++) {
@@ -438,7 +478,7 @@ export default {
       }
       return total
     },
-    makePayment(){
+    OldmakePayment(){
       const formData =  new  FormData()
       formData.append('user', this.invoice.user)
       formData.append('invoice', this.invoice.invoice)

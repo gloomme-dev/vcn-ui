@@ -57,10 +57,10 @@
       indicator-color="transparent"
       active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
     >
-      <q-tab class="text-grey" name="pending" :label="'Pending '+ $route.meta.title" >
+      <q-tab class="text-grey" name="pending" :label="'Unpaid '+ $route.meta.title" >
         <q-badge color="red" floating>{{ pending.length  }}</q-badge>
       </q-tab>
-      <q-tab class="text-grey" name="approved" :label="'Approved '+ $route.meta.title" >
+      <q-tab class="text-grey" name="approved" :label="'Paid '+ $route.meta.title" >
         <q-badge color="red" floating>{{ approved.length  }}</q-badge>
       </q-tab>
     </q-tabs>
@@ -278,12 +278,15 @@ box-sizing: border-box;
                 <!--            registered voters -->
                 <q-item clickable class="col">
                   <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="mail" />
+                    <q-avatar
+                      :text-color="props.row.approved == false ? 'red':'green'"
+
+                      :icon="props.row.approved == false ? 'sync':'task_alt' " />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.user.email }}</q-item-label>
-                    <q-item-label caption>Email</q-item-label>
+                    <q-item-label class="text-capitalize">{{  props.row.approved == false ? 'Not yet approved ':' Approved' }}</q-item-label>
+                    <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />
@@ -315,7 +318,6 @@ box-sizing: border-box;
                     <q-item-label caption>Category</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-separator inset vertical />
 
                 <q-item  class="">
                   <q-item-section side>
@@ -332,16 +334,16 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item clickable @click="account = props.row, dialog.deactivate = ! dialog.deactivate">
+                          <q-item clickable @click="approvePermit(props.row)">
                             <q-item-section top avatar>
                               <q-avatar
                                 color="secondary-1"
                                 class="avartar"
-                                text-color="red"
-                                icon="block"
+                                text-color="green"
+                                icon="task_alt"
                               />
                             </q-item-section>
-                            <q-item-section> Deactivate</q-item-section>
+                            <q-item-section> Approve</q-item-section>
                           </q-item>
                           <q-item clickable>
                             <q-item-section top avatar>
@@ -527,7 +529,6 @@ box-sizing: border-box;
         color="primary"
         vertical-actions-align="right"
       >
-        <q-fab-action  @click="dialog.applyPermit = ! dialog.applyPermit" label-position="right" label="Apply" color="secondary" :icon="$route.meta.icon" />
       </q-fab>
     </q-page-sticky>
   </q-page>
@@ -597,6 +598,32 @@ export default {
       //   move in approved
         this.approved.push(row)
         this.pending.splice(this.pending.indexOf(row), 1)
+
+      })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'Can not approve permit'
+          })
+          // return error
+        });
+    },
+    approvePermit(row){
+      const data = {
+        invoiceGeneration: true
+      }
+      const url = this.$route.meta.url+'/approve/'+row.id
+      this.post(url, data).then(response => {
+        this.$q.notify({
+          color: 'green-4',
+          textColor: 'white',
+          icon: 'check_circle',
+          message: 'Permit approved'
+        })
 
       })
         .catch((error) => {

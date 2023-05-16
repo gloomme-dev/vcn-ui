@@ -8,7 +8,7 @@
         <q-avatar    size="44px" >
           <q-img style="width: 70%" :ratio="1" alt="logo"  src="img/logo.png" />
         </q-avatar>
-        <q-toolbar-title class="text-accent text-weight-bolder">
+        <q-toolbar-title class="text-red text-weight-bolder">
           Veterinary Council of Nigeria
         </q-toolbar-title>
 
@@ -43,16 +43,16 @@
 <!--        <q-btn stretch  :to="{ name: 'login' }" flat label="Login" />-->
       </q-toolbar>
     </q-header>
-    <q-footer  class=" text-center bg-info text-primary">
+    <q-footer  class=" text-center bg-white text-blue">
       <q-toolbar>
 
         <q-toolbar-title class="text-subtitle2" >
-
-          <q-avatar size="44px" >
-            <q-img style="width: 70%" :ratio="1"  alt="logo"  src="img/logo.PNG" />
+          {{ `   Powered By   ` }}
+          <q-avatar size="100px" >
+            <q-img style="width: 100%"   alt="Crate365  logo"  src="https://res.cloudinary.com/galaxycom/image/upload/v1681513241/carter365_hxted2.png" />
           </q-avatar>
 <!--  copy right and year-->
-         {{ `  © Veterinary Council of Nigeria  ${new Date().getFullYear()} ` }}
+
         </q-toolbar-title>
       </q-toolbar>
     </q-footer>

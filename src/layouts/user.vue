@@ -19,11 +19,15 @@
               class="bg-transparent  text-center q-gutter-y-lg  q-mt-md "
 
             >
+                     <span class="text-white text-weight-bolder">
+                  VCN <br>
+
+               </span>
                          <div class="absolute-bottom bg-transparent ">
 
-                <q-avatar size=""  color="secondary" class="avartar">
-                  <q-icon color="white" name="manage_accounts" />
-                </q-avatar>
+                           <q-avatar size="100px"   class="avartar bg-transparent">
+                             <q-img   alt="Crate365  logo"  src="https://res.cloudinary.com/galaxycom/image/upload/v1681513241/carter365_hxted2.png" />
+                           </q-avatar>
                 <div class="text-weight-bold text-white q-mt-sm">
                   {{ user.firstName + ' ' + user.lastName }}
                 </div>

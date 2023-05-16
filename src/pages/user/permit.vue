@@ -91,43 +91,18 @@
                 <q-item clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
-                      class="avartar"
-                      text-color="red"
-                      icon="person_search"
-                    />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label class="">{{ props.row.user.firstName+ " "+props.row.user.lastName }}</q-item-label>
-                    <q-item-label caption>Applicant</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator inset vertical />
+                      :text-color="props.row.approved == false ? 'red':'green'"
 
-
-
-                <q-separator inset vertical />
-                <q-item clickable class="col"  >
-                  <q-item-section top avatar>
-                    <q-avatar text-color="orange" icon="call" />
+                      :icon="props.row.approved == false ? 'sync':'task_alt' " />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.user.phone }}</q-item-label>
-                    <q-item-label caption>Phone</q-item-label>
+                    <q-item-label class="text-capitalize">{{  props.row.approved == false ? 'Not yet approved ':' Approved' }}</q-item-label>
+                    <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-separator inset vertical />
-                <!--            registered voters -->
-                <q-item clickable class="col">
-                  <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="mail" />
-                  </q-item-section>
 
-                  <q-item-section>
-                    <q-item-label>{{  props.row.user.email }}</q-item-label>
-                    <q-item-label caption>Email</q-item-label>
-                  </q-item-section>
-                </q-item>
+
                 <q-separator inset vertical />
                 <q-item clickable class="col">
                   <q-item-section top avatar>
@@ -235,41 +210,14 @@ box-sizing: border-box;
                 <q-item clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
-                      class="avartar"
-                      text-color="red"
-                      icon="person_search"
-                    />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label class="">{{ props.row.user.firstName+ " "+props.row.user.lastName }}</q-item-label>
-                    <q-item-label caption>Applicant</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator inset vertical />
+                      :text-color="props.row.approved == false ? 'red':'green'"
 
-
-
-                <q-separator inset vertical />
-                <q-item clickable class="col"  >
-                  <q-item-section top avatar>
-                    <q-avatar text-color="orange" icon="call" />
+                      :icon="props.row.approved == false ? 'sync':'task_alt' " />
                   </q-item-section>
 
                   <q-item-section>
-                    <q-item-label>{{  props.row.user.phone }}</q-item-label>
-                    <q-item-label caption>Phone</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator inset vertical />
-                <!--            registered voters -->
-                <q-item clickable class="col">
-                  <q-item-section top avatar>
-                    <q-avatar text-color="purple" icon="mail" />
-                  </q-item-section>
-
-                  <q-item-section>
-                    <q-item-label>{{  props.row.user.email }}</q-item-label>
-                    <q-item-label caption>Email</q-item-label>
+                    <q-item-label class="text-capitalize">{{  props.row.approved == false ? 'Not yet approved ':' Approved' }}</q-item-label>
+                    <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator inset vertical />

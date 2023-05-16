@@ -683,10 +683,7 @@ export default {
     },
     generateInv(){
 
-
-
       const formData =  new  FormData()
-
 
       formData.append('managingDirector', this.permit.managingDirector)
       formData.append('organizationName', this.permit.organizationName)
@@ -753,6 +750,13 @@ export default {
       this.payment.userId =  this.user.id
       this.payment.appliedActivities.push(this.invoiceDetails.id)
       this.payment.invoiceStatus = "PENDING"
+      this.payment.payerName = ""
+      this.payment.payerEmail = ""
+      this.payment.payerPhone = ""
+      this.payment.description = "Payment for "
+      this.payment.orderId = ""
+      this.payment.serviceTypeId = ""
+
 
       let url = "invoice/create";
 

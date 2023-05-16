@@ -291,9 +291,8 @@ box-sizing: border-box;
 
                 <q-item clickable class="col">
                   <q-item-section>
-                    <q-item-label>
-                      {{ props.row.invoice.appliedActivity[0].paymentType[0].amount }}
-                      <!--                      <p>{{ activity.paymentType }}</p>-->
+                    <q-item-label><span>&#8358;</span>
+                      {{ formatNumber(props.row.invoice.amount) }}
 
                     </q-item-label>
                     <q-item-label caption>Amount</q-item-label>

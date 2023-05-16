@@ -13,13 +13,18 @@
 <!--    </div>-->
     <div class="col-md-3 col-xs-11 ">
 
-      <q-card flat class="">
+      <q-card flat class="text-center">
 
-        <q-card-section class="text-center">
+<!--        <q-card-section class="text-center">-->
                         <div class="text-h4 text-weight-bold text-grey-8">Welcome back</div>
                         <div class="text-subtitle2">Sign in</div>
-        </q-card-section>
-        <q-form style="border-radius: 10.7px" class="my-card q-pa-md  q-gutter-y-sm">
+
+<!--        </q-card-section>-->
+
+        <q-form style="border-radius: 10.7px" class=" text-center my-card q-pa-md  q-gutter-y-sm">
+          <q-avatar size="150px" >
+            <q-img   alt="Crate365  logo"  src="https://res.cloudinary.com/galaxycom/image/upload/v1681513241/carter365_hxted2.png" />
+          </q-avatar>
           <q-input
             name="email"
             borderless
@@ -51,7 +56,7 @@
           </q-input>
           <q-card-actions class="text-center q-gutter-y-lg justify-around">
             <q-btn  @click="logUserIn"  no-caps  color="accent"  class="text-white full-width q-pa-sm login-btn"  label="Sign in" />
-            <q-btn unelevated  no-caps label=" Don't have an account?" />
+            <q-btn  unelevated  no-caps label=" Don't have an account?" />
 
             <q-btn
               :to="{ name: 'register' }"
