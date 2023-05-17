@@ -5,11 +5,11 @@ import { LocalStorage } from "quasar";
 
 // const url = "https://monkfish-app-fonzu.ondigitalocean.app/api/";
 
-const url = "http://localhost:8080/api/";
-// const url = "https://vcnapi.crater365.net/api/";
+// const url = "http://localhost:8080/api/";
+const url = "https://vcnapi.crater365.net/api/";
 
 const config = {
-
+  baseURL: url,
 };
 const api = axios.create(config);
 

@@ -157,6 +157,18 @@ box-sizing: border-box;
                             <q-item-section> Pay</q-item-section>
                           </q-item>
                                <q-separator />
+                          <q-item v-close-popup clickable @click="checkStatusRRR(props.row.rrr)">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="grey"
+                                icon="verified_user"
+                              />
+                            </q-item-section>
+                            <q-item-section> Check</q-item-section>
+                          </q-item>
+                               <q-separator />
                           <q-item clickable >
                             <q-item-section top avatar>
                               <q-avatar
@@ -378,11 +390,22 @@ box-sizing: border-box;
 <script type="text/javascript" src="https://remitademo.net/payment/v1/remita-pay-inline.bundle.js"></script>
 
 <script>
+import axios from 'axios';
+import {api} from "boot/axios";
+
+const pending = []
+const paid = []
 export default {
   data: () => ({
+    appData: {
+      pending: [],
+      paid: [],
+      // other properties
+    },
     rrr: '',
-    pending: [],
-    paid: [],
+    rrrList: [],
+    pending: pending,
+    paid: paid,
     invoices: [],
     permit:{
       activities: [],
@@ -419,7 +442,7 @@ export default {
       order: 'desc',
       rowsPerPage: 0
     },
-    filter: '',
+    filter: ''
 
 
   }),
@@ -429,6 +452,8 @@ export default {
     script.src = "https://remitademo.net/payment/v1/remita-pay-inline.bundle.js";
     script.async = true;
     document.head.appendChild(script)
+
+
   },
 
   computed: {
@@ -445,7 +470,68 @@ export default {
 
 
   methods: {
+
+    // check the status of rrr
+    checkStatusRRR(rrr){
+      const url = this.$route.meta.url  +'/status-rrr/' + rrr
+      this.get(url).then(response => {
+
+        // find the index of the invoice using the rrr from the pending list
+        const index = pending.findIndex(invoice => invoice.rrr === rrr)
+
+        // using the index find the invoice from the invoices list pending and push to paid
+        paid.push(pending[index])
+
+        // remove the invoice from the pending list
+        pending.splice(index, 1)
+
+        //   if response.data.message ==='Successful'
+        if(response.data.message ==='Successful'){
+          this.$q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Payment Successful',
+            position: 'top'
+          })
+        }
+        else{
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Payment Failed',
+            position: 'top'
+          })
+        }
+
+      }).catch(
+        error => {
+          console.log(error)
+        }
+      )
+    },
     makePayment(rrr) {
+      function RRRstatusCheck(rrr) {
+        const url = `invoice/status-rrr/${rrr}`;
+        api.get(url)
+          .then(response => {
+            // Find the invoice in the "pending" list with the matching RRR
+            const invoiceIndex = pending.findIndex(invoice => invoice.rrr === rrr);
+            if (invoiceIndex === -1) {
+              console.warn(`Invoice with RRR ${rrr} not found in "pending" list`);
+              return;
+            }
+
+            // Move the invoice from "pending" to "paid" list
+            const invoice = pending[invoiceIndex];
+            paid.push(invoice);
+            pending.splice(invoiceIndex, 1);
+          })
+          .catch(error => {
+            console.error('Error fetching status:', error);
+          });
+      }
       const paymentEngine = RmPaymentEngine.init({
         key: 'S1VESXwzMjk3NTY0MnxiNmMwZTRmN2Q3OTg5ZjE0NWY5YzMzYWI2NDI1NGFjNTlmN2YwYzVjMDc3ZjE2ZTEwNjc3NTIwZjcwYmQ1Njk0ODU3YTU4YzIxZWEyMDkzZjYwZGE0ZGM4ZDI4NjBkMGQ1NmFjY2FkOGEzN2M1MTQxNDljN2JkZjI4OGU4MmZmMg==',
         processRrr: true,
@@ -457,6 +543,12 @@ export default {
           }]
         },
         onSuccess: function(response) {
+
+          // // bind `this` context to the function
+          // const boundCheckStatusRRR = this.checkStatusRRR.bind(this);
+          // boundCheckStatusRRR(rrr);
+          RRRstatusCheck(rrr);
+
           console.log('callback Successful Response', response);
           const xhr = new XMLHttpRequest();
           xhr.open('GET', 'https://remita.net/');
@@ -526,11 +618,27 @@ export default {
         //   map through the payments and push the pending and paid to their respective arrays
         this.invoices.map((invoice) => {
           if (invoice.invoiceStatus === 'PENDING') {
-            this.pending.push(invoice)
+            pending.push(invoice)
+            //   check if pending is not empty
+            if (pending.length > 0) {
+              this.tab = 'pending'
+              //   get all the rrr of the pending and push them to an array
+              pending.forEach((pending) => {
+                this.rrrList.push(pending.rrr)
+              })
+
+
+            } else {
+              this.tab = 'paid'
+            }
+
+            this.tab = 'pending'
           } else {
-            this.paid.push(invoice)
+            paid.push(invoice)
           }
         })
+        // console.log(this.rrrList)
+      //
 
       })
         .catch((error) => {
