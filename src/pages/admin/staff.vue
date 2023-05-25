@@ -370,6 +370,7 @@ export default {
     staff: [],
     staffForm: {
       roles: [],
+      membership_status: true,
       vcnNumber: "",
       "firstName": "",
       "lastName": "",

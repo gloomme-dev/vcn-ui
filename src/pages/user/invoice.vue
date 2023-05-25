@@ -128,8 +128,6 @@
                   </q-item-section>
                 </q-item>
 
-
-
                 <q-item  class="">
                   <q-item-section side>
                     <q-btn flat fab-mini round icon="more_vert" color="grey" >
@@ -238,6 +236,14 @@ box-sizing: border-box;
                     <q-item-label caption>Status</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-separator inset vertical />
+
+                <q-item clickable class="col">
+                  <q-item-section>
+                    <q-item-label >  {{ props.row.rrr }}</q-item-label>
+                    <q-item-label caption>RRR</q-item-label>
+                  </q-item-section>
+                </q-item>
 
                 <q-item  class="">
                   <q-item-section side>
@@ -291,100 +297,17 @@ box-sizing: border-box;
       </q-tab-panel>
 
     </q-tab-panels>
-
-    <!--    add payment-->
-    <q-dialog
-      v-model="dialog.payment"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-      class="q-pa-md "
-    >
-      <q-card
-        ref="testHtml"
-        class="rounded-borders dark-frost q-pa-sm dialog-style">
-        <q-toolbar class=" q-mt-xs">
-          <q-avatar size=""  color="" class="avartar">
-            <q-btn flat round color="grey"  dense icon="agent_account" />
-          </q-avatar>
-          <q-toolbar-title class="text-grey text-weight-bold text-left">Create an payment type </q-toolbar-title>
-          <q-space />
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-        <q-card-section
-          class="row q-mt-lg justify-center row q-gutter-y-md col-md-8  q-gutter-x-md justify-around q-pa-sm"
-        >
-
-          <!--              Payment name-->
-<!--          <div class="col-md-10 card-input">-->
-<!--            <q-input label="Payment"   type="text"   color="grey" v-model="payment.paymentName"   >-->
-<!--              <template  v-slot:prepend>-->
-<!--                <q-icon name="event" />-->
-<!--              </template>-->
-<!--            </q-input>-->
-<!--          </div>-->
-
-          <!--              Payment amount-->
-<!--          <div class="col-md-10 card-input">-->
-<!--            <q-input label="Amount"   type="text"   color="grey" v-model="payment.amount"   >-->
-<!--              <template  v-slot:prepend>-->
-<!--                <q-icon name="account_balance" />-->
-<!--              </template>-->
-<!--            </q-input>-->
-<!--          </div>-->
-
-
-          <!--              activitypayment description-->
-<!--          <div class="col-md-10 card-input">-->
-<!--            <q-input label="Description"   type="text"   color="grey" v-model="payment.description"   >-->
-<!--              <template  v-slot:prepend>-->
-<!--                <q-icon name="description" />-->
-<!--              </template>-->
-<!--            </q-input>-->
-<!--          </div>-->
-
-          <div  class="col-md-10 q-pl-md q-pr-md card-input">
-            <q-file
-              @input="onFilePicked(model)"
-              @clear="loadDefaultImage"
-              v-model="model"
-              label="Upload Receipts"
-            >
-              <template  v-slot:before>
-                <q-btn @click="dialog.previewImage =! dialog.previewImage" flat fab-mini>
-                  <q-avatar >
-                    <img
-                      :src="imgUploaded ? imgUploaded : 'https://cdn.quasar.dev/img/avatar.png'"
-                    >
-                  </q-avatar>
-                </q-btn>
-
-              </template>
-              <template v-slot:append>
-                <q-btn round dense flat icon="cancel" @click="loadDefaultImage" />
-              </template>
-            </q-file>
-          </div>
-
-
-
-        </q-card-section>
-        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
-          <q-btn @click="makePayment" style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Submit" v-close-popup  />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
     <!--    FAB-->
-    <q-page-sticky position="bottom-right" :offset="[20, 60]">
-      <q-fab
-        icon="add"
-        direction="up"
-        color="primary"
-        vertical-actions-align="right"
-      >
-        <q-fab-action  @click="dialog.applyPermit = ! dialog.applyPermit" label-position="right" label="Apply" color="secondary" :icon="$route.meta.icon" />
-      </q-fab>
-    </q-page-sticky>
+<!--    <q-page-sticky position="bottom-right" :offset="[20, 60]">-->
+<!--      <q-fab-->
+<!--        icon="add"-->
+<!--        direction="up"-->
+<!--        color="primary"-->
+<!--        vertical-actions-align="right"-->
+<!--      >-->
+<!--        <q-fab-action  @click="dialog.applyPermit = ! dialog.applyPermit" label-position="right" label="Apply" color="secondary" :icon="$route.meta.icon" />-->
+<!--      </q-fab>-->
+<!--    </q-page-sticky>-->
   </q-page>
 </template>
 <script type="text/javascript" src="https://remitademo.net/payment/v1/remita-pay-inline.bundle.js"></script>
@@ -393,8 +316,8 @@ box-sizing: border-box;
 import axios from 'axios';
 import {api} from "boot/axios";
 
-const pending = []
-const paid = []
+let pending = []
+let paid = []
 export default {
   data: () => ({
     appData: {
@@ -443,16 +366,15 @@ export default {
       rowsPerPage: 0
     },
     filter: ''
-
-
   }),
   mounted() {
+    // this.paid = []
+    // this.pending = []
     this.getInvoice()
     const script = document.createElement("script");
     script.src = "https://remitademo.net/payment/v1/remita-pay-inline.bundle.js";
     script.async = true;
     document.head.appendChild(script)
-
 
   },
 
@@ -470,7 +392,6 @@ export default {
 
 
   methods: {
-
     // check the status of rrr
     checkStatusRRR(rrr){
       const url = this.$route.meta.url  +'/status-rrr/' + rrr
@@ -500,7 +421,7 @@ export default {
             color: 'red-4',
             textColor: 'white',
             icon: 'cloud_done',
-            message: 'Payment Failed',
+            message: 'No payment made',
             position: 'top'
           })
         }
@@ -543,13 +464,7 @@ export default {
           }]
         },
         onSuccess: function(response) {
-
-          // // bind `this` context to the function
-          // const boundCheckStatusRRR = this.checkStatusRRR.bind(this);
-          // boundCheckStatusRRR(rrr);
           RRRstatusCheck(rrr);
-
-          console.log('callback Successful Response', response);
           const xhr = new XMLHttpRequest();
           xhr.open('GET', 'https://remita.net/');
           xhr.send();
@@ -570,40 +485,6 @@ export default {
       }
       return total
     },
-    OldmakePayment(){
-      const formData =  new  FormData()
-      formData.append('user', this.invoice.user)
-      formData.append('invoice', this.invoice.invoice)
-      formData.append('files',this.$store.state.docs[0])
-
-      let url = 'payment/create'
-
-      this.postWithHeaders(url, formData)
-        .then((response) => {
-
-          this.$q.notify({
-            type: 'positive',
-            message: 'Payment made Successful',
-            actions: [
-              { icon: 'refresh', color: 'white', handler: () => {  } }
-            ]
-          })
-
-        //  move invoice to the paid array
-
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$q.notify({
-            type: 'negative',
-            message: 'Cannot  make payment',
-            actions: [
-              { icon: 'refresh', color: 'white', handler: () => {  } }
-            ]
-          })
-        });
-
-    },
     processPayment(row){
       this.dialog.payment = ! this.dialog.payment
       this.invoice.user = row.user.id
@@ -619,27 +500,11 @@ export default {
         this.invoices.map((invoice) => {
           if (invoice.invoiceStatus === 'PENDING') {
             pending.push(invoice)
-            //   check if pending is not empty
-            if (pending.length > 0) {
-              this.tab = 'pending'
-              //   get all the rrr of the pending and push them to an array
-              pending.forEach((pending) => {
-                this.rrrList.push(pending.rrr)
-              })
-
-
-            } else {
-              this.tab = 'paid'
-            }
-
             this.tab = 'pending'
           } else {
             paid.push(invoice)
           }
         })
-        // console.log(this.rrrList)
-      //
-
       })
         .catch((error) => {
           console.log(error);
@@ -680,36 +545,6 @@ export default {
           })
           // return error
         });
-    },
-    loadDefaultImage () {
-      this.imgUploaded = ''
-      this.model = null
-      // remove all content docs from vuex store
-      this.$store.commit("resetStore");
-      localStorage.removeItem('file')
-    },
-    getImage () {
-      this.imgUploaded = localStorage.getItem('file')
-      // return localStorage.getItem('file')
-    },
-    // get uploaded file from the file picker and save it as base64 on local storage
-    onFilePicked (file) {
-      this.$store.commit("addToDocs", file);
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        localStorage.setItem('file', reader.result)
-        this.getImage()
-      }
-
-    },
-
-    // download image
-    downloadImage(file) {
-      const link = document.createElement('a');
-      link.href = file;
-      link.download = 'image.png';
-      link.click();
     },
     //exportCSV
     exportAll() {
@@ -891,7 +726,11 @@ export default {
     }
   },
   beforeDestroy() {
-    //  reset store
+    // clear the  pending and paid arrays
+
+    paid = [];
+    pending = [];
+
     this.$store.commit("resetActives");
     this.$store.commit("resetStore");
   }

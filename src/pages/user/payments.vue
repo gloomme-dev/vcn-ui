@@ -85,25 +85,7 @@
           dense
           row-key="id"
         >
-          <!--        <template v-slot:header="props">-->
-          <!--          <q-tr-->
-          <!--            class="bg-transparent rounded-borders q-mb-xs q-mt-xs"-->
-          <!--            style="max-width: 600px"-->
-          <!--            :props="props">-->
-          <!--            <div-->
-          <!--              class="row q-gutter-y-xs text-center  bg-white q-ma-sm "-->
-          <!--            >-->
-          <!--              <q-th-->
-          <!--                v-for="col in props.cols"-->
-          <!--                :key="col.name"-->
-          <!--                :props="props"-->
-          <!--                class=" text-purple col  text-left q-item  "-->
-          <!--              >-->
-          <!--                {{ col.label }}-->
-          <!--              </q-th>-->
-          <!--            </div>-->
-          <!--          </q-tr>-->
-          <!--        </template>-->
+
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
@@ -150,42 +132,6 @@
                   </q-item-section>
                 </q-item>
 
-
-
-                <!--                <q-separator inset vertical />-->
-                <!--                <q-item clickable class="col"  >-->
-                <!--                  <q-item-section top avatar>-->
-                <!--                    <q-avatar text-color="orange" icon="call" />-->
-                <!--                  </q-item-section>-->
-
-                <!--                  <q-item-section>-->
-                <!--                    <q-item-label>{{  props.row.createdBy.phone }}</q-item-label>-->
-                <!--                    <q-item-label caption>Phone</q-item-label>-->
-                <!--                  </q-item-section>-->
-                <!--                </q-item>-->
-                <!--                <q-separator inset vertical />-->
-                <!--                &lt;!&ndash;            registered voters &ndash;&gt;-->
-                <!--                <q-item clickable class="col">-->
-                <!--                  <q-item-section top avatar>-->
-                <!--                    <q-avatar text-color="purple" icon="mail" />-->
-                <!--                  </q-item-section>-->
-
-                <!--                  <q-item-section>-->
-                <!--                    <q-item-label>{{  props.row.createdBy.email }}</q-item-label>-->
-                <!--                    <q-item-label caption>Email</q-item-label>-->
-                <!--                  </q-item-section>-->
-                <!--                </q-item>-->
-                <!--                <q-separator inset vertical />-->
-                <!--                <q-item clickable class="col">-->
-                <!--                  <q-item-section top avatar>-->
-                <!--                    <q-avatar text-color="purple" icon="domain" />-->
-                <!--                  </q-item-section>-->
-
-                <!--                  <q-item-section>-->
-                <!--                    <q-item-label>{{  props.row.organizationName }}</q-item-label>-->
-                <!--                    <q-item-label caption>Organization</q-item-label>-->
-                <!--                  </q-item-section>-->
-                <!--                </q-item>-->
 
                 <q-item  class="">
                   <q-item-section side>
@@ -252,25 +198,7 @@ box-sizing: border-box;
           dense
           row-key="id"
         >
-          <!--        <template v-slot:header="props">-->
-          <!--          <q-tr-->
-          <!--            class="bg-transparent rounded-borders q-mb-xs q-mt-xs"-->
-          <!--            style="max-width: 600px"-->
-          <!--            :props="props">-->
-          <!--            <div-->
-          <!--              class="row q-gutter-y-xs text-center  bg-white q-ma-sm "-->
-          <!--            >-->
-          <!--              <q-th-->
-          <!--                v-for="col in props.cols"-->
-          <!--                :key="col.name"-->
-          <!--                :props="props"-->
-          <!--                class=" text-purple col  text-left q-item  "-->
-          <!--              >-->
-          <!--                {{ col.label }}-->
-          <!--              </q-th>-->
-          <!--            </div>-->
-          <!--          </q-tr>-->
-          <!--        </template>-->
+
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">

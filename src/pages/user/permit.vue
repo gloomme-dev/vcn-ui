@@ -57,10 +57,10 @@
       indicator-color="transparent"
       active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
     >
-      <q-tab class="text-grey" name="pending" :label="'Pending '+ $route.meta.title" >
+      <q-tab class="text-grey" name="pending" :label="'Invoice Pending '+ $route.meta.title" >
         <q-badge color="red" floating>{{ pending.length  }}</q-badge>
       </q-tab>
-      <q-tab class="text-grey" name="approved" :label="'Approved '+ $route.meta.title" >
+      <q-tab class="text-grey" name="approved" :label="'Invoice Approved '+ $route.meta.title" >
         <q-badge color="red" floating>{{ approved.length  }}</q-badge>
       </q-tab>
     </q-tabs>
@@ -158,6 +158,20 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
+
+
+                          <q-item clickable @click="account = props.row,  dialog.delete =! dialog.delete">
+                            <q-item-section top avatar>
+                              <q-avatar
+                                color="secondary-1"
+                                class="avartar"
+                                text-color="grey-8"
+                                icon="receipt"
+                              />
+                            </q-item-section>
+                            <q-item-section> Generate Invoice</q-item-section>
+                          </q-item>
+
                           <q-item-section clickable v-if="props.row.invoiceGenerationStatus == true " side>
                             <q-btn  @click="generateInvoice(props.row)" flat fab-mini round icon="receipt" color="grey" >
                               <q-tooltip>Generate Invoice</q-tooltip>
@@ -265,17 +279,17 @@ box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 12px 12px rgba(41, 121, 255, 0.08);
   border-radius: 12px;">
-                          <q-item @click="generateInvoice(props.row)" clickable >
-                            <q-item-section top avatar>
-                              <q-avatar
-                                color="secondary-1"
-                                class="avartar"
-                                text-color="primary"
-                                icon="task_alt"
-                              />
-                            </q-item-section>
-                            <q-item-section> Generate Invoice</q-item-section>
-                          </q-item>
+<!--                          <q-item @click="generateInvoice(props.row)" clickable >-->
+<!--                            <q-item-section top avatar>-->
+<!--                              <q-avatar-->
+<!--                                color="secondary-1"-->
+<!--                                class="avartar"-->
+<!--                                text-color="primary"-->
+<!--                                icon="task_alt"-->
+<!--                              />-->
+<!--                            </q-item-section>-->
+<!--                            <q-item-section> Generate Invoice</q-item-section>-->
+<!--                          </q-item>-->
                           <q-item clickable>
                             <q-item-section top avatar>
                               <q-avatar
@@ -313,7 +327,6 @@ box-sizing: border-box;
       </q-tab-panel>
 
     </q-tab-panels>
-
     <!--    Apply for Permit-->
     <q-dialog
       v-model="dialog.applyPermit"
@@ -535,8 +548,11 @@ export default {
         })
 
         //   move in approved
-        this.approved.push(row)
+        // this.approved.push(row)
         this.pending.splice(this.pending.indexOf(row), 1)
+
+      //   got to invoice page
+        this.$router.push({name: 'user-invoice'})
 
       })
         .catch((error) => {
@@ -611,6 +627,9 @@ export default {
     getAllPermits(){
       const url = this.$route.meta.url
       this.get(url).then(response => {
+
+        console.log(response)
+
         this.permits = response.data
         this.pending = response.data.filter((permit) => {
           return permit.invoiceGenerationStatus === false
@@ -634,58 +653,6 @@ export default {
 
     },
 
-    // get all members
-    getAllMembers (url) {
-
-      this.get(url).then(response => {
-        if (response.data.length === 0) {
-
-          this.$q.notify({
-            color: 'red-4',
-            textColor: 'white',
-            icon: 'report_problem',
-            message: 'No more records found'
-          })
-          this.$store.commit('decrementPageNumber')
-        } else {
-          this.allMembers = response.data
-        }
-      })
-    },
-
-
-    shareIncident (description, file) {
-      if (navigator.share) {
-        navigator.share({
-          title: 'Incident Report',
-          text: description,
-          url: file,
-        })
-          .then(() =>{
-            this.$q.notify({
-              message: 'Incident shared successfully',
-              color: 'positive',
-              position: 'top',
-              icon: 'done'
-            })
-          })
-          .catch((error) => {
-            this.$q.notify({
-              message: 'Error sharing incident',
-              color: 'negative',
-              position: 'top',
-              icon: 'warning'
-            })
-          });
-      } else {
-        this.$q.notify({
-          message: 'Web Share API is not supported in this browser.',
-          color: 'negative',
-          position: 'top',
-          icon: 'warning'
-        })
-      }
-    },
 
     // download image
     downloadImage(file) {
@@ -818,60 +785,8 @@ export default {
           });
           // return error
         });
-    },
-    //get incident metaData
-    getIncidentMetaData(id) {
-      this.get("incident/" + id)
-        .then((response) => {
-          this.incident = response.data;
-          this.dialog.view = true;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.loading = !this.loading
-          // return error
-        });
-    },
-    //update incident status
-    updateIncidentStatus(row, status){
-      const query = "incident/" + row.id;
-      const data = {
-        title: row.title,
-        description: row.description,
-        locationId: row.locationId,
-        userLocationEnum: 'POLLING_UNIT',
-        incidentStatus: status,
-        lgaNumber: row.lgaNumber,
-        wardNumber: row.wardNumber,
-        puNumber: row.puNumber
-      }
-
-      this.put(query, data)
-        .then((response) => {
-          this.unresolvedList.splice(this.unresolvedList.indexOf(row), 1)
-
-          // this.resolvedList.push(response.data)
-          setTimeout(() => {
-            this.$q.notify({
-              progress: true,
-              position: 'bottom-right',
-              message: 'Incident has been marked as resolved',
-              icon: 'task_alt',
-              color: 'dark',
-              textColor: 'white'
-            })
-          }, 500)
-        })
-        .catch((error) => {
-          console.log(error);
-          // this.loading = !this.loading
-          this.$q.notify({
-            type: "negative",
-            message: "Cannot update status",
-          });
-          // return error
-        });
     }
+
   },
   beforeDestroy() {
     //  reset store
@@ -882,6 +797,21 @@ export default {
 </script>
 
 <style scoped>
+.tabs-container-bg{
+  background: rgba(118, 118, 128, 0.12);
+  border-radius: 8px;
+}
+
+.cust-tab{
+  margin-top: 3px;
+  padding-top: 2px;
+  height: 35px;
+  background: #FFFFFF;
+  border: 0.5px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  background-color: white;
+}
 .login-btn{
   background: #4461F2;
   box-shadow: 0px 12px 21px 4px rgba(68, 97, 242, 0.15);

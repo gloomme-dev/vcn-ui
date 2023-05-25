@@ -55,12 +55,16 @@
                 input-class="list-item-s"
                 borderless
                 v-model="user.password"
-                type="password"
+                :type="isPwd ? 'password' : 'text'"
                 lazy-rules
                 :rules="[val => val && val.length > 0 || 'Please type your password']"
               >
-                <template v-slot:prepend>
-                  <q-icon name="lock" color="grey" />
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPwd = !isPwd"
+                  />
                 </template>
               </q-input>
               <q-card-actions>

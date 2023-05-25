@@ -71,13 +71,13 @@
 
 
 
-          <q-item  :to="{ name: 'payment-user' }" class="text-white"   clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="account_balance" />
-            </q-item-section>
+<!--          <q-item  :to="{ name: 'payment-user' }" class="text-white"   clickable v-ripple>-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon name="account_balance" />-->
+<!--            </q-item-section>-->
 
-            <q-item-section> Payments </q-item-section>
-          </q-item>
+<!--            <q-item-section> Payments </q-item-section>-->
+<!--          </q-item>-->
 
 
           <q-item class="text-white" @click="logUserOut" clickable v-ripple>

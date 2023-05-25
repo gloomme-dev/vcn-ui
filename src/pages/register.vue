@@ -103,9 +103,43 @@
                   </template>
                 </q-input>
               </div>
+<!--              Password-->
+              <div class="col-md-5 col-xs-11 q-pa-md">
+                <q-input
+                        :rules="isPwd ? [] : [val => val.length > 5 || 'Minimum 8 characters']"
+                         :type="isPwd ? 'password' : 'text'"
+                         label="Password"
+                         color="grey" v-model="form.password"   >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <!--                cpassword-->
+              <div class="col-md-5 col-xs-11 q-pa-md">
+                <q-input label="Confirm Password"
+                         :type="isCpwd ? 'password' : 'text'"
+                         :rules="isCpwd ? [] : [val => val === form.password || 'Password does not match']"
+                         color="grey" v-model="cpassword"   >
+                  <template  v-slot:prepend>
+                    <q-icon name="lock_open" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isCpwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isCpwd = !isCpwd"
+                    />
+                  </template>
+                </q-input>
+              </div>
               <!--                Phone-->
               <div class="col-md-5 col-xs-11 card-input">
-                <q-input label="Phone"   type="text"   color="grey" v-model="form.phone"   >
+                <q-input label="Phone"   type="tel"   color="grey" v-model="form.phone"   >
                   <template  v-slot:prepend>
                     <q-icon name="phone" />
                   </template>
@@ -322,6 +356,9 @@ import {register} from "register-service-worker";
 
 export default {
   data: () => ({
+    cpassword: "",
+    isPwd: true,
+    isCpwd: true,
     activitySelect: [],
     activities: [],
     anotherInstitution: false,
@@ -347,7 +384,7 @@ export default {
       gender: "",
       dob: "",
       address:"",
-      password: "123456",
+      password: "",
       anotherInstitution: "",
       stateOrigin: "",
       lgaOrigin: "",
