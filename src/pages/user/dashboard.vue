@@ -140,8 +140,15 @@
                     <q-item-label caption>Amount</q-item-label>
                   </q-item-section>
 
+                  <q-item-section clickable  side>
+                    <q-btn  @click="downloadForm(props.row)" flat fab-mini round icon="file_download" color="grey" >
+                      <q-tooltip>Download form</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+
                   <q-item-section clickable v-if=" props.row.variableAmount !=true " side>
-                    <q-btn  @click="generateInvoice(props.row)" flat fab-mini round icon="receipt" color="grey" >
+
+                    <q-btn  @click="InitInvoice(props.row), dialog.invoice =! dialog.invoice" flat fab-mini round icon="receipt" color="grey" >
                       <q-tooltip>Generate Invoice</q-tooltip>
                     </q-btn>
 <!--                    <q-item-label caption>Generate Invoice</q-item-label>-->
@@ -177,14 +184,9 @@
         ref="testHtml"
         class="rounded-borders dark-frost q-pa-sm dialog-payment-info">
         <q-toolbar class=" q-mt-xs bg-info">
-          <!--          <q-toolbar-title class="text-grey text-weight-bold text-left">Activity </q-toolbar-title>-->
-          <!--          <div class="row-record justify-evenly">-->
+
           <q-item @click="dialog.view =! dialog.view, activityDetails =  props.row" clickable class="col">
 
-<!--            <q-item-section>-->
-<!--              <q-item-label class="">{{activityDetails.activityName }}</q-item-label>-->
-<!--              <q-item-label caption>Activity</q-item-label>-->
-<!--            </q-item-section>-->
           </q-item>
           <q-separator inset vertical />
           <q-item clickable class="col"  >
@@ -276,15 +278,6 @@
               <q-item-label>Premise  Permit    </q-item-label>
             </q-item-section>
           </q-item>
-<!--          <q-separator inset vertical />-->
-<!--          <q-item clickable class="col"  >-->
-
-<!--            <q-item-section>-->
-<!--              <q-item-label><span>&#8358;</span> {{   formatNumber( totalAmountList(paymentsSelect)) }}</q-item-label>-->
-<!--              <q-item-label caption>Total</q-item-label>-->
-<!--            </q-item-section>-->
-<!--          </q-item>-->
-          <!--          </div>-->
           <q-space />
           <q-btn flat round dense icon="close" v-close-popup />
         </q-toolbar>
@@ -445,28 +438,61 @@
       </q-card>
     </q-dialog>
 
+<!--    invoice generation-->
+    <q-dialog
+      v-model="dialog.invoice"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style">
+        <q-toolbar class=" q-mt-xs">
+          <q-avatar size=""  color="" class="avartar">
+            <q-btn flat round color="grey"  dense icon="agent_account" />
+          </q-avatar>
+          <q-toolbar-title class="text-grey text-weight-bold text-left">Upload filled out form </q-toolbar-title>
+          <q-space />
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-card-section
+          class="row q-mt-lg justify-center row q-gutter-y-md col-md-8  q-gutter-x-md justify-around q-pa-sm"
+        >
 
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab
-        @click="dialog.activity = !dialog.activity"
-        v-model="fabRight"
-        vertical-actions-align="right"
-        color="primary"
-        glossy
-        icon="keyboard_arrow_up"
-        direction="up"
-      >
-        <!--        <q-fab-action label-position="left" color="dark" @click="generatePDFList" icon="print" label="Print PDF" />-->
-        <!--        <download-excel-->
-        <!--          :name="'LGA Inspectors ' + new Date().toDateString() + '.xls'"-->
-        <!--          type="csv"-->
-        <!--          :fetch="exportAll"-->
-        <!--        >-->
-        <!--          <q-fab-action label-position="left" color="dark" @click="exportAll" icon="bar_chart" label="Excel" />-->
-        <!--        </download-excel>-->
-      </q-fab>
-    </q-page-sticky>
-<!--    add payment-->
+          <div  class="col-md-10 q-pl-md q-pr-md card-input">
+            <q-file
+              @input="onFilePicked(model)"
+              @clear="loadDefaultImage"
+              v-model="model"
+              label="Upload form"
+            >
+              <template  v-slot:before>
+                <q-btn @click="dialog.previewImage =! dialog.previewImage" flat fab-mini>
+                  <q-avatar >
+                    <img
+                      :src="imgUploaded ? imgUploaded : 'https://cdn.quasar.dev/img/avatar.png'"
+                    >
+                  </q-avatar>
+                </q-btn>
+
+              </template>
+              <template v-slot:append>
+                <q-btn round dense flat icon="cancel" @click="loadDefaultImage" />
+              </template>
+            </q-file>
+          </div>
+
+
+
+        </q-card-section>
+        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
+          <q-btn  @click="generateInvoice()"   style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="Generate" label="Submit" v-close-popup  />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+<!--    Generate premise permit invoice-->
     <q-dialog
       v-model="dialog.payment"
       transition-show="slide-up"
@@ -543,7 +569,7 @@
 
         </q-card-section>
         <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
-          <q-btn style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Create" v-close-popup  />
+          <q-btn @click="generateInvoice" style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="secondary" label="Create" v-close-popup  />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -632,6 +658,7 @@ export default {
       phone: ""
     },
     dialog: {
+      invoice: false,
       previewImage: false,
       updateInvoice: false,
       payment:false,
@@ -665,6 +692,45 @@ export default {
     }
   },
   methods: {
+
+    downloadForm(row){
+      if (row.formUrl !== null) {
+
+
+        const fileExtension = row.formUrl.split('.').pop().toLowerCase();
+
+        fetch(row.formUrl)
+          .then(response => response.blob())
+          .then(blob => {
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+
+            // Set the download attribute based on the file extension
+            link.download =  row.activityName+` form.${fileExtension}`;
+
+            // Programmatically click the anchor element to start the download
+            link.click();
+
+            // Clean up the temporary anchor element
+            URL.revokeObjectURL(link.href);
+          })
+          .catch(error => {
+            console.error('Error downloading the form:', error);
+          });
+
+      }
+      else {
+      //   notify the user that the form is not available
+        this.$q.notify({
+          color: 'negative',
+          message: 'Form not available',
+          icon: 'report_problem'
+        })
+      }
+
+
+    },
     getPaymentType(row){
       this.permit.paymentType.push(row.id)
       // forEach row map paymentType to paymentTypes
@@ -737,8 +803,7 @@ export default {
 
       this.dialog.updateInvoice =! this.dialog.updateInvoice
     },
-
-    generateInvoice(row) {
+    InitInvoice(row){
       this.invoiceDetails = row
       this.payment.appliedActivities = []
       let amount = 0
@@ -746,8 +811,13 @@ export default {
         amount += this.invoiceDetails.paymentType[i].amount
         this.payment.paymentType.push(this.invoiceDetails.paymentType[i].id)
       }
+
       this.payment.amount = amount
-      this.payment.userId =  this.user.id
+
+      // get id from local storage profile
+      this.payment.userId = LocalStorage.getItem('profile').id
+      console.log(this.payment.userId)
+
       this.payment.appliedActivities.push(this.invoiceDetails.id)
       this.payment.invoiceStatus = "PENDING"
       this.payment.payerName = ""
@@ -758,10 +828,30 @@ export default {
       this.payment.serviceTypeId = ""
 
 
+      console.log(this.payment)
+
+      // this.generateInvoice(row);
+    },
+    generateInvoice() {
+
+      const formData =  new  FormData()
+
+      formData.append('amount', this.payment.amount);
+      formData.append('userId', this.user.id);
+      formData.append('paymentType', this.payment.paymentType);
+      formData.append('appliedActivities', this.payment.appliedActivities);
+      formData.append('invoiceStatus', 'PENDING');
+      formData.append('payerName', '');
+      formData.append('payerEmail', '');
+      formData.append('payerPhone', '');
+      formData.append('description', 'Payment for');
+      formData.append('orderId', '');
+      formData.append('serviceTypeId', '');
+      formData.append('files',this.$store.state.docs[0]);
+
       let url = "invoice/create";
 
-
-      this.post(url, this.payment).then(response => {
+      this.postWithHeaders(url, formData).then(response => {
         this.$q.notify({
           message: 'Invoice generated  successfully',
           color: 'positive',
@@ -801,11 +891,10 @@ export default {
         });
     },
     getProfile() {
-      let url = "profile";
-      this.get(url).then(response => {
-        this.user = response.data;
 
-        let url = "activity/role/"+response.data.roles[0].id;
+      const roleId = JSON.parse(localStorage.getItem('profile')).roles[0].id
+
+        let url = "activity/role/"+roleId;
         this.get(url).then(res => {
 
 
@@ -815,11 +904,6 @@ export default {
             console.log(error);
           });
 
-
-      })
-        .catch(error => {
-          console.log(error);
-        });
     },
     getActivities() {
       let url = "activity/role/"+this.user.roles[0].id;

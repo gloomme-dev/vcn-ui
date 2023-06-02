@@ -63,7 +63,8 @@ Vue.mixin({
       this.$store.commit("resetStore");
       this.$q.localStorage.remove('session')
       this.$q.localStorage.remove("token");
-      this.$q.localStorage.remove("profile");
+      this.$q.localStorage.remove("file");
+      // this.$q.localStorage.remove("profile");
       this.$router.push({ name: "Home" });
     },
     setAuthToken(token) {

@@ -21,7 +21,7 @@ const routes = [
     component: () => import('layouts/user.vue'),
     children: [
       {
-        meta: { transitionName: 'slide-fade', title: 'Profile', back: 'dashboard-user',url: 'activity' , icon: 'dashboard' , showToolBar: true, showButtonNav: true },
+        meta: { transitionName: 'slide-fade', title: 'Dashboard', back: 'dashboard-user',url: 'activity' , icon: 'dashboard' , showToolBar: true, showButtonNav: true },
         path: "dashboard",
         name: "member-dashboard",
         component: () => import("pages/user/dashboard.vue"),
@@ -64,7 +64,7 @@ const routes = [
         component: () => import("pages/admin/dashboard.vue"),
       },
       {
-        meta: { transitionName: 'slide-fade', title: 'Profile', back: 'dashboard-admin', url: 'profile' ,icon: 'account_circle', showToolBar: true, showButtonNav: true },
+        meta: { transitionName: 'slide-fade', title: 'Activities', back: 'dashboard-admin', url: 'profile' ,icon: 'account_circle', showToolBar: true, showButtonNav: true },
         path: "profile",
         name: "admin-profile",
         component: () => import("pages/common/profile.vue"),

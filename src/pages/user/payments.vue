@@ -540,8 +540,6 @@ export default {
 
   methods: {
 
-
-
     // get all categories
     getPayments(){
       const url = this.$route.meta.url

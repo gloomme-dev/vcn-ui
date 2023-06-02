@@ -88,7 +88,7 @@
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
-                <q-item clickable class="col">
+                <q-item @click="getInvoiceDetails(props.row)" clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
                       class="avartar"
@@ -297,17 +297,64 @@ box-sizing: border-box;
       </q-tab-panel>
 
     </q-tab-panels>
-    <!--    FAB-->
-<!--    <q-page-sticky position="bottom-right" :offset="[20, 60]">-->
-<!--      <q-fab-->
-<!--        icon="add"-->
-<!--        direction="up"-->
-<!--        color="primary"-->
-<!--        vertical-actions-align="right"-->
-<!--      >-->
-<!--        <q-fab-action  @click="dialog.applyPermit = ! dialog.applyPermit" label-position="right" label="Apply" color="secondary" :icon="$route.meta.icon" />-->
-<!--      </q-fab>-->
-<!--    </q-page-sticky>-->
+    <!--    Invoice view -->
+    <q-dialog
+      v-model="dialog.view"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style">
+        <q-toolbar class=" q-mt-xs bg-info">
+          <div  v-for="(activity, index) in invoiceInfo.appliedActivity"  :key="index" class=" col-12 row  q-mt-xs  ">
+            <q-item clickable class="col">
+              <q-item-section>
+                <q-item-label class="">{{  activity.activityName }}</q-item-label>
+                <q-item-label caption>Payment</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-btn flat round dense icon="close" v-close-popup />
+          </div>
+          <q-space />
+
+        </q-toolbar>
+
+        <q-card-section class="row justify-center">
+
+          <div  v-for="(payment, index) in invoiceInfo.paymentType"  :key="index" class=" col-12 row  q-mt-xs  row-record">
+            <q-item clickable class="col">
+              <q-item-section>
+                <q-item-label class="">{{payment.paymentName }}</q-item-label>
+                <q-item-label caption>Payment</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-separator inset vertical />
+            <q-item clickable class="col"  >
+              <q-item-section>
+                <q-item-label><span>&#8358;</span>{{   formatNumber(payment.amount) }}</q-item-label>
+                <q-item-label caption>Amount</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-separator inset vertical />
+            <q-item clickable class="col">
+              <q-item-section>
+                <q-item-label>{{ payment.description }}</q-item-label>
+                <q-item-label caption>Description</q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+        </q-card-section>
+        <q-card-section class="row justify-center">
+          <q-img
+            class="avatar"
+            :src="invoiceInfo.img"
+          />
+        </q-card-section>
+
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <script type="text/javascript" src="https://remitademo.net/payment/v1/remita-pay-inline.bundle.js"></script>
@@ -320,6 +367,9 @@ let pending = []
 let paid = []
 export default {
   data: () => ({
+    invoiceInfo:{
+      img: ''
+    },
     appData: {
       pending: [],
       paid: [],
@@ -344,6 +394,7 @@ export default {
       files: []
     },
     dialog: {
+      invoice: false,
       payment: false,
       applyPermit: false,
       delete: false,
@@ -392,22 +443,52 @@ export default {
 
 
   methods: {
+    // get invoice details
+    getInvoiceDetails(row){
+
+      this.invoiceInfo = row
+
+      const url = this.$route.meta.url+'/'+row.id
+      this.get(url).then(response => {
+        console.log(response)
+        this.invoiceInfo = response.data
+
+        this.invoiceInfo.img  = "data:image/png;base64,"+response.data.forms[0].file
+
+        this.dialog.view = true
+
+      })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'Can not get '+this.$route.meta.title
+          })
+          // return error
+        });
+    },
     // check the status of rrr
     checkStatusRRR(rrr){
       const url = this.$route.meta.url  +'/status-rrr/' + rrr
       this.get(url).then(response => {
 
-        // find the index of the invoice using the rrr from the pending list
-        const index = pending.findIndex(invoice => invoice.rrr === rrr)
-
-        // using the index find the invoice from the invoices list pending and push to paid
-        paid.push(pending[index])
-
-        // remove the invoice from the pending list
-        pending.splice(index, 1)
 
         //   if response.data.message ==='Successful'
         if(response.data.message ==='Successful'){
+
+
+          // find the index of the invoice using the rrr from the pending list
+          const index = pending.findIndex(invoice => invoice.rrr === rrr)
+
+          // using the index find the invoice from the invoices list pending and push to paid
+          paid.push(pending[index])
+
+          // remove the invoice from the pending list
+          pending.splice(index, 1)
+
           this.$q.notify({
             color: 'green-4',
             textColor: 'white',
@@ -683,6 +764,30 @@ export default {
           this.loading = !this.loading
           // return error
         });
+    },
+    loadDefaultImage () {
+      this.imgUploaded = ''
+      this.model = null
+      // remove all content docs from vuex store
+      this.$store.commit("resetStore");
+      localStorage.removeItem('file')
+    },
+    getImage () {
+      this.imgUploaded = localStorage.getItem('file')
+      // return localStorage.getItem('file')
+    },
+
+
+    // get uploaded file from the file picker and save it as base64 on local storage
+    onFilePicked (file) {
+      this.$store.commit("addToDocs", file);
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        localStorage.setItem('file', reader.result)
+        this.getImage()
+      }
+
     },
     //update incident status
     updateIncidentStatus(row, status){

@@ -29,8 +29,14 @@
                              <q-img   alt="Crate365  logo"  src="https://res.cloudinary.com/galaxycom/image/upload/v1681513241/carter365_hxted2.png" />
                            </q-avatar>
                 <div class="text-weight-bold text-white q-mt-sm">
-                  {{ user.firstName + ' ' + user.lastName }}
+                  <q-avatar size="56px" class="q-mb-sm">
+                    <img :src='`data:image/png;base64,` + user.applicationFile[0].file'>
+                  </q-avatar>
                 </div>
+               <span class="text-white">{{ user.firstName + ' ' + user.lastName }}</span>
+
+
+
                 <div class="text-primary"><q-chip square class="white-frost">{{ user.roles[0].title  }}</q-chip></div>
                 <div class="text-primary"><q-chip color="white" outline class="">{{ user.membershipStatus ? 'Active' : 'Inactive'  }}</q-chip></div>
               </div>
@@ -130,6 +136,11 @@ export default {
 
           //  save to local storage
           localStorage.setItem('profile', JSON.stringify(response.data))
+
+          const avatar = "data:image/png;base64," + this.user.applicationFile[0].file
+
+          localStorage.setItem('avatar', JSON.stringify(avatar))
+
           // this.profile = response.data
         })
         .catch((error) => {
@@ -161,6 +172,8 @@ export default {
   mounted() {
   //   if profile is not in local storage
   if (!LocalStorage.getItem("profile")) {
+
+    console.log("profile not in local storage")
     this.getProfile()
   }
   else {

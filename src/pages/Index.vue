@@ -17,7 +17,6 @@
 
 <!--        <q-card-section class="text-center">-->
                         <div class="text-h4 text-weight-bold text-grey-8">Welcome back</div>
-                        <div class="text-subtitle2">Sign in</div>
 
 <!--        </q-card-section>-->
 
@@ -27,8 +26,8 @@
           </q-avatar>
           <q-input
             name="email"
-            borderless
-            input-class="list-item-s"
+            outlined
+            input-class=""
             placeholder="Email"
             v-model="user.email"
             type="email"
@@ -40,27 +39,30 @@
             </template>
           </q-input>
           <!--              password field-->
-          <q-input
-            name="password"
-            placeholder="Password"
-            input-class="list-item-s"
-            borderless
-            v-model="user.password"
-            :type="isPwd ? 'password' : 'text'"
-            lazy-rules
-            :rules="[val => val && val.length > 0 || 'Please type your password']"
-          >
-            <template v-slot:prepend>
-              <q-icon name="lock" color="grey" />
-            </template>
-            <template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwd = !isPwd"
-              />
-            </template>
-          </q-input>
+          <div class="">
+            <q-input
+              outlined
+              name="password"
+              placeholder="Password"
+              input-class=""
+              v-model="user.password"
+              :type="isPwd ? 'password' : 'text'"
+              lazy-rules
+              :rules="[val => val && val.length > 0 || 'Please type your password']"
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" color="grey" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
+
+          </div>
           <q-card-actions class="text-center q-gutter-y-lg justify-around">
             <q-btn  @click="logUserIn"  no-caps  color="accent"  class="text-white full-width q-pa-sm login-btn"  label="Sign in" />
             <q-btn  unelevated  no-caps label=" Don't have an account?" />
@@ -135,6 +137,8 @@ export default {
       this.get(url)
         .then((response) => {
 
+          console.log(response)
+
           //  save to local storage
           localStorage.setItem('profile', JSON.stringify(response.data))
           // this.profile = response.data
@@ -174,7 +178,7 @@ export default {
 
           let userRoles = response.data.roles[0];
 
-          this.getProfile();
+          // this.getProfile();
 
 
           if(userRoles){

@@ -20,16 +20,17 @@
             :done="step > 1"
             class=" q-pa-md justify-center text-h5 text-grey-7 text-center "
           >
-            <q-form  @submit.prevent="register"  class="col-md-12 row q-pa-md q-gutter-y-lg q-gutter-x-lg justify-center" enctype="multipart/form-data">
+            <q-form  @submit.prevent="register"  class=" col-md-10 row q-pa-md q-gutter-y-md q-gutter-x-lg justify-center  justify-around" enctype="multipart/form-data">
 
 
 <!--              select from acitivities-->
+              <div class="col-md-10 ">
+                <label class="text-grey text-capitalize">Register as</label>
+              </div>
 
-              <div class="col-md-10 card-input">
-<!--                <label class="text-grey text-capitalize">Register as</label>-->
+              <div class="col-md-11 card-input">
                 <q-select
                   class="col-md-3"
-                  label="Register as"
                   use-chips
                   @input="getActivityRoles(activitySelect)"
                   behavior="menu"
@@ -51,13 +52,32 @@
                     <q-separator inset />
                   </template>
                   <template v-slot:selected-item="scope">
-                    <q-chip square
+                    <q-chip
+
+                      square
                       color="secondary"
                       text-color="white"
                       class="q-my-none q-ml-xs q-mr-none"
                     >
                       {{ scope.opt.activityName }}
                     </q-chip>
+<!--                    <q-chip-->
+<!--                      v-else-->
+<!--                      square-->
+<!--                      color="secondary"-->
+<!--                      text-color="white"-->
+<!--                      class="q-my-none q-ml-xs q-mr-none"-->
+<!--                    >-->
+<!--                    Select Registration type-->
+<!--                    </q-chip>-->
+
+                  </template>
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-italic text-grey">
+                        No options slot
+                      </q-item-section>
+                    </q-item>
                   </template>
                 </q-select>
               </div>
@@ -96,7 +116,7 @@
                 </q-input>
               </div>
               <!--              email-->
-              <div class="col-md-10 card-input">
+              <div class="col-md-11 card-input">
                 <q-input label="Email"   type="email"   color="grey" v-model="form.email"   >
                   <template  v-slot:prepend>
                     <q-icon name="email" />
@@ -163,7 +183,7 @@
                 </div>
               <!--              dob-->
               <div class="col-md-5 col-xs-11 card-input">
-                <q-input label="Date of Birth"   type="date"   color="grey" v-model="form.dob"   >
+                <q-input standout label="Date of Birth" label-position="above"   type="date"   color="grey" v-model="form.dob"   focused>
                   <template  v-slot:prepend>
                     <q-icon name="date_range" />
                   </template>
@@ -186,7 +206,7 @@
                 </q-select>
               </div>
 <!--              Address-->
-              <div class="col-md-10 card-input">
+              <div class="col-md-11 card-input">
                 <q-input label="Address"   type="text"   color="grey" v-model="form.address"   >
                   <template  v-slot:prepend>
                     <q-icon name="home" />
@@ -194,7 +214,7 @@
                 </q-input>
               </div>
 <!--              Picture-->
-              <div  class="col-md-10 q-pl-md q-pr-md card-input">
+              <div  class="col-md-11 q-pl-md q-pr-md card-input">
                 <q-file
                   @input="onFilePicked(model)"
                   @clear="loadDefaultImage"
@@ -247,9 +267,9 @@
             :done="step > 3"
             class=" q-pa-md justify-center text-h5 text-grey-7 text-center "
           >
-            <q-form @submit.prevent="register" class="col-md-12 row q-pa-md q-gutter-y-lg q-gutter-x-lg justify-center" enctype="multipart/form-data">
+            <q-form @submit.prevent="register" class="col-md-12 row q-pa-md q-gutter-y-lg q-gutter-x-lg justify-center  justify-around" enctype="multipart/form-data">
               <!--              institution-->
-              <div class="col-md-10 card-input">
+              <div class="col-md-11 card-input">
                 <q-input label="Institution"   type="text"   color="grey" v-model="form.institution"   >
                   <template  v-slot:prepend>
                     <q-icon name="school" />
@@ -273,13 +293,13 @@
                   </template>
                 </q-input>
               </div>
-              <div class=" q-ml-xl text-left col-md-12 q-gutter-y-sm q-gutter-x-lg ">
-                <div class="text-subtitle2">Inclusion of additional Qualification attracts additional fee</div>
+<!--              <div class=" q-ml-xl text-left col-md-12 q-gutter-y-sm q-gutter-x-lg ">-->
+<!--                <div class="text-subtitle2">Inclusion of additional Qualification attracts additional fee</div>-->
 
-                <q-btn @click="anotherInstitution = ! anotherInstitution" outline icon="add" no-caps unelevated label="Add another institution" >
-                  <q-tooltip>Click to add another institution</q-tooltip>
-                </q-btn>
-              </div>
+<!--                <q-btn @click="anotherInstitution = ! anotherInstitution" outline icon="add" no-caps unelevated label="Add another institution" >-->
+<!--                  <q-tooltip>Click to add another institution</q-tooltip>-->
+<!--                </q-btn>-->
+<!--              </div>-->
               <div v-if="anotherInstitution ==true" class=" col-md-12 row q-gutter-y-lg q-gutter-x-lg justify-center ">
                 <!--              institution-->
                 <div class="col-md-10 card-input">
@@ -300,7 +320,7 @@
 
                 <!--              dateAwarded-->
                 <div class="col-md-5 col-xs-11 card-input">
-                  <q-input label="Date Awarded"   type="date"   color="grey" v-model="form.dateAwarded"   >
+                  <q-input label="Date Awarded"   type="date"   color="grey" v-model="form.dateAwarded"  label-position="above"  >
                     <template  v-slot:prepend>
                       <q-icon name="date_range" />
                     </template>
@@ -426,6 +446,9 @@ export default {
     getActivity () {
       let url = 'activity'
       this.get(url).then(response => {
+
+        console.log(response)
+
         if (response.data.length === 0) {
 
           this.$q.notify({
