@@ -57,10 +57,10 @@
       indicator-color="transparent"
       active-class="cust-tab q-pt-xs text-primary q-ml-xs q-mr-xs"
     >
-      <q-tab class="text-grey" name="pending" :label="'Unpaid '+ $route.meta.title" >
+      <q-tab class="text-grey" name="pending" :label="'Pending  '+ $route.meta.title" >
         <q-badge color="red" floating>{{ pending.length  }}</q-badge>
       </q-tab>
-      <q-tab class="text-grey" name="approved" :label="'Paid '+ $route.meta.title" >
+      <q-tab class="text-grey" name="approved" :label="'Approved '+ $route.meta.title" >
         <q-badge color="red" floating>{{ approved.length  }}</q-badge>
       </q-tab>
     </q-tabs>
@@ -88,7 +88,7 @@
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
-                <q-item clickable class="col">
+                <q-item @click="getPermitDetails(props.row), permitInfo = props.row, dialog.view != dialog.view" clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
                       class="avartar"
@@ -246,7 +246,7 @@ box-sizing: border-box;
           <template v-slot:body="props">
             <tr class="bg-transparent rounded-borders " style="max-width: 600px">
               <div class="row  justify-lg-center bg-white q-mt-xs row-record">
-                <q-item clickable class="col">
+                <q-item @click="permitInfo = props.row, dialog.view =! dialog.view" clickable class="col">
                   <q-item-section top avatar>
                     <q-avatar
                       class="avartar"
@@ -521,6 +521,128 @@ box-sizing: border-box;
       </q-card>
     </q-dialog>
 
+<!--    View permit details-->
+    <!--    View permit -->
+    <q-dialog
+      v-model="dialog.view"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      class="q-pa-md "
+    >
+      <q-card
+        ref="testHtml"
+        class="rounded-borders dark-frost q-pa-sm dialog-style-dashboard">
+        <q-toolbar class=" justify-around q-mt-xs q-gutter-x-md">
+          <q-item clickable class="col"  >
+            <q-item-section>
+              <q-item-label>Premise  Permit    </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-space />
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+        <q-form  @submit.prevent="generateInv()"   class=" q-mt-md col-md-12 row q-pa-md q-gutter-y-lg q-gutter-x-xs justify-evenly justify-start"  enctype="multipart/form-data">
+
+          <div class="col-md-5 card-input">
+            <q-input label="Organization"   type="text"   color="grey" v-model="permitInfo.organizationName"   >
+              <template  v-slot:prepend>
+                <q-icon name="domain" />
+              </template>
+            </q-input>
+          </div>
+          <!--              CAC-->
+          <div class="col-md-4 col-xs-11 card-input">
+            <q-input label="CAC"   type="text"   color="grey" v-model="permitInfo.cac"   >
+              <template  v-slot:prepend>
+                <q-icon name="pin" />
+              </template>
+            </q-input>
+          </div>
+          <!--          payments-->
+          <div class="col-md-10 card-input">
+<!--            <label class="text-grey text-capitalize">Select Premise Activity </label>-->
+            <q-field label="Select Premise Activity" stack-label>
+              <template v-slot:control>
+                <div class="self-center full-width no-outline" tabindex="0">{{ permitInfo.paymentType[0].paymentName }}</div>
+              </template>
+            </q-field>
+          </div>
+
+          <!--state/Region-->
+          <div class="col-md-5 col-xs-11 card-input">
+            <q-field label="State" stack-label>
+              <template v-slot:control>
+                <div class="self-center full-width no-outline" tabindex="0">{{ permitInfo.stateOrigin }}</div>
+              </template>
+            </q-field>
+          </div>
+          <!--        Local Goverment area-->
+          <div class="col-md-4 col-xs-11 card-input">
+            <q-field label="Local Government Area" stack-label>
+              <template v-slot:control>
+                <div class="self-center full-width no-outline" tabindex="0">{{ permitInfo.lgaOrigin }}</div>
+              </template>
+            </q-field>
+          </div>
+
+          <!--              Address-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label="Address of practicing premises"   type="text"   color="grey" v-model="permitInfo.addressPremises"   >
+              <template  v-slot:prepend>
+                <q-icon name="location_on" />
+              </template>
+            </q-input>
+          </div>
+          <!--              addtionalDetails-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label="Additional Details"   type="text"   color="grey" v-model="permitInfo.addtionalDetails"   >
+              <template  v-slot:prepend>
+                <q-icon name="list" />
+              </template>
+            </q-input>
+          </div>
+
+          <!--              vcnNumber-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label=" Managing Director VCN Number"   type="text"   color="grey" v-model="permitInfo.VCNNumber"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--              managingDirector-->
+          <div class="col-md-10 col-xs-11 card-input">
+            <q-input label=" Managing Director "   type="text"   color="grey" v-model="permitInfo.managingDirector"   >
+              <template  v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+          </div>
+          <!--              others-->
+          <div class="col-md-5 col-xs-11 card-input">
+            <q-input autogrow label="Others "   type="text"   color="grey" v-model="permitInfo.others"   >
+              <template  v-slot:prepend>
+                <q-icon name="info" />
+              </template>
+            </q-input>
+          </div>
+          <!--              AffliatedTo-->
+          <div class="col-md-4 col-xs-11 card-input">
+            <q-input label="Affiliated To"   type="text"   color="grey" v-model="permitInfo.affliatedTo"   >
+              <template  v-slot:prepend>
+                <q-icon name="home_work" />
+              </template>
+            </q-input>
+          </div>
+
+          <q-card-actions class="col-10">
+            <q-btn @click="approveInvoiceGeneration(permitInfo)" unelevated type="Approve"   class="text-white full-width q-pa-sm login-btn" no-caps color="secondary" label="Generate" v-close-popup  />
+          </q-card-actions>
+
+        </q-form>
+      </q-card>
+    </q-dialog>
+
     <!--    FAB-->
     <q-page-sticky position="bottom-right" :offset="[20, 60]">
       <q-fab
@@ -537,6 +659,18 @@ box-sizing: border-box;
 <script>
 export default {
   data: () => ({
+    permitInfo: {
+      paymentType: [],
+      paymentId: '',
+      stateOrigin: '',
+      lgaOrigin: '',
+      addressPremises: '',
+      addtionalDetails: '',
+      VCNNumber: '',
+      managingDirector: '',
+      others: '',
+      affliatedTo: '',
+    },
     permit:{
       activities: [],
     },
@@ -585,6 +719,31 @@ export default {
 
 
   methods: {
+    getPermitDetails(row){
+
+      this.permitInfo = row
+
+      const url = this.$route.meta.url+'/'+row.id
+      this.get(url).then(response => {
+        this.permitInfo = response.data
+        console.log(response)
+        // this.invoiceInfo.img  = "data:image/png;base64,"+response.data.forms[0].file
+        this.dialog.view = true
+
+      })
+        .catch((error) => {
+          console.log(error);
+          this.loading = !this.loading
+          this.$q.notify({
+            color: 'red-4',
+            textColor: 'white',
+            icon: 'report_problem',
+            message: 'Can not get '+this.$route.meta.title
+          })
+          // return error
+        });
+
+    },
     approve(row){
       const url = this.$route.meta.url+'/approve/'+row.id
       this.post(url, row).then(response => {
@@ -727,6 +886,9 @@ export default {
     getAllPermits(){
       const url = this.$route.meta.url+'/all'
       this.get(url).then(response => {
+
+        console.log(response)
+
         this.permits = response.data
         this.pending = response.data.filter((permit) => {
           return permit.invoiceGenerationStatus === false
@@ -998,6 +1160,13 @@ export default {
 </script>
 
 <style scoped>
+.dialog-style-dashboard{
+  width: 1105px; max-width: 80vw; height: 866px;
+  background: #FFFFFF;
+  box-shadow: -14px 30px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
 .login-btn{
   background: #4461F2;
   box-shadow: 0px 12px 21px 4px rgba(68, 97, 242, 0.15);

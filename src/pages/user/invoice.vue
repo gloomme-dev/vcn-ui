@@ -450,11 +450,8 @@ export default {
 
       const url = this.$route.meta.url+'/'+row.id
       this.get(url).then(response => {
-        console.log(response)
         this.invoiceInfo = response.data
-
         this.invoiceInfo.img  = "data:image/png;base64,"+response.data.forms[0].file
-
         this.dialog.view = true
 
       })

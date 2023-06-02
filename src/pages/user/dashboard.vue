@@ -262,7 +262,7 @@
 
       </q-card>
     </q-dialog>
-<!--    update invoice -->
+<!--    Premise permit -->
     <q-dialog
       v-model="dialog.updateInvoice"
       transition-show="slide-up"
