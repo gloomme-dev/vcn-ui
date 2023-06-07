@@ -400,11 +400,11 @@ box-sizing: border-box;
           </div>
         </q-card-section>
 
-<!--        Asset-->
-        <q-card-section class="row justify-center">
+<!--       forms image Asset-->
+        <q-card-section class="row justify-center"  v-for="(img,index) in invoiceInfo.forms"  :key="index">
           <q-img
             class="avatar"
-            :src="invoiceInfo.img"
+            :src="`data:image/png;base64,`+img.file"
           />
         </q-card-section>
 

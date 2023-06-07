@@ -91,23 +91,15 @@ Vue.mixin({
 
     },
 
-
-    getSession() {
-      return LocalStorage.getItem("session").token;
-    },
-    getFullname() {
-      const name = LocalStorage.getItem("session");
-      return name.fullName;
-    },
     getUserDetails() {
-      const obj = LocalStorage.getItem("session");
-      return {
-        token: obj.token,
-        email: obj.user.email,
-        fullName: obj.staffRecord.firstName + " " + obj.staffRecord.middleName +"  "+ obj.staffRecord.surname,
-        staffId: obj.staffRecord.staffId,
-        phone: obj.user.phoneNumber,
-        id: obj.staffRecord.id,
+      const obj = JSON.parse(LocalStorage.getItem("profile"))
+
+      console.log(obj)
+
+        return {
+        email: obj.email,
+        fullName: obj.firstName + " " + obj.lastName +"  "+ obj.otherName,
+        id: obj.id,
       };
     },
     getUsername() {

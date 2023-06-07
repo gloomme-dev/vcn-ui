@@ -30,9 +30,10 @@
                            </q-avatar>
                 <div class="text-weight-bold text-white q-mt-sm">
                   <q-avatar size="56px" class="q-mb-sm">
-                    <img :src='`data:image/png;base64,` + user.applicationFile[0].file'>
+                    <img :src='user.avatar'>
                   </q-avatar>
                 </div>
+               <span class="text-white">{{  }}</span>
                <span class="text-white">{{ user.firstName + ' ' + user.lastName }}</span>
 
 
@@ -114,6 +115,12 @@ export default {
     return {
       invoices: [],
       user: {
+        avatar: "",
+        applicationFile: [
+          {
+            file: ""
+          }
+        ],
         roles: [
           {
             title: ""
@@ -127,21 +134,23 @@ export default {
   },
 
   methods: {
+
     getProfile() {
       const url = "profile"
       this.get(url)
         .then((response) => {
-
           this.user = response.data
-
           //  save to local storage
           localStorage.setItem('profile', JSON.stringify(response.data))
+          // if this.user.applicationFile[0].file is empty, use default avatar
+          if (this.user.applicationFile  === undefined ) {
 
-          const avatar = "data:image/png;base64," + this.user.applicationFile[0].file
-
-          localStorage.setItem('avatar', JSON.stringify(avatar))
-
-          // this.profile = response.data
+          }
+          else{
+            const avatar = "data:image/png;base64," + this.user.applicationFile[0].file
+            this.user.avatar = avatar
+            localStorage.setItem('profile', JSON.stringify(this.user))
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -170,15 +179,15 @@ export default {
   },
 
   mounted() {
-  //   if profile is not in local storage
   if (!LocalStorage.getItem("profile")) {
-
     console.log("profile not in local storage")
     this.getProfile()
   }
   else {
     this.user = JSON.parse(LocalStorage.getItem("profile"))
   }
+    this.getActivities();
+
 
 
   },

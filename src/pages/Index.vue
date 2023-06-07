@@ -136,9 +136,6 @@ export default {
       const url = "profile"
       this.get(url)
         .then((response) => {
-
-          console.log(response)
-
           //  save to local storage
           localStorage.setItem('profile', JSON.stringify(response.data))
           // this.profile = response.data
@@ -172,7 +169,6 @@ export default {
       const query = "auth/sign-in";
       this.post(query, this.user)
         .then((response) => {
-
 
           this.setAuthToken(response.data.token);
 

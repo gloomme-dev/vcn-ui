@@ -465,6 +465,7 @@
               @input="onFilePicked(model)"
               @clear="loadDefaultImage"
               v-model="model"
+              multiple
               label="Upload form"
             >
               <template  v-slot:before>
@@ -482,12 +483,9 @@
               </template>
             </q-file>
           </div>
-
-
-
         </q-card-section>
-        <q-card-actions  align="center" class="text-primary absolute-bottom q-mb-lg">
-          <q-btn  @click="generateInvoice()"   style="width: 93px; height: 40px; border-radius: 10px;" no-caps color="Generate" label="Submit" v-close-popup  />
+        <q-card-actions  align="center" class="text-white absolute-bottom q-mb-lg">
+          <q-btn color="primary"  @click="generateInvoice()"   style="width: 93px; height: 40px; border-radius: 10px;" no-caps  label="Generate" v-close-popup  />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -692,7 +690,14 @@ export default {
     }
   },
   methods: {
-
+    onRejected (rejectedEntries) {
+      // Notify plugin needs to be installed
+      // https://quasar.dev/quasar-plugins/notify#Installation
+      this.$q.notify({
+        type: 'negative',
+        message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+      })
+    },
     downloadForm(row){
       if (row.formUrl !== null) {
 
@@ -816,7 +821,6 @@ export default {
 
       // get id from local storage profile
       this.payment.userId = LocalStorage.getItem('profile').id
-      console.log(this.payment.userId)
 
       this.payment.appliedActivities.push(this.invoiceDetails.id)
       this.payment.invoiceStatus = "PENDING"
@@ -826,9 +830,6 @@ export default {
       this.payment.description = "Payment for "
       this.payment.orderId = ""
       this.payment.serviceTypeId = ""
-
-
-      console.log(this.payment)
 
       // this.generateInvoice(row);
     },
@@ -847,7 +848,15 @@ export default {
       formData.append('description', 'Payment for');
       formData.append('orderId', '');
       formData.append('serviceTypeId', '');
-      formData.append('files',this.$store.state.docs[0]);
+
+      for (let i = 0; i < this.$store.state.docs.length; i++) {
+        const file = this.$store.state.docs[i];
+        formData.append('files', file, file.name);
+      }
+
+      // formData.append('files',this.$store.state.docs);
+
+      // console.log(formData)
 
       let url = "invoice/create";
 
@@ -894,10 +903,9 @@ export default {
 
       const roleId = JSON.parse(localStorage.getItem('profile')).roles[0].id
 
+
         let url = "activity/role/"+roleId;
         this.get(url).then(res => {
-
-
           this.activities = res.data;
         })
           .catch(error => {
@@ -926,15 +934,17 @@ export default {
       // return localStorage.getItem('file')
     },
     // get uploaded file from the file picker and save it as base64 on local storage
-    onFilePicked (file) {
-      this.$store.commit("addToDocs", file);
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        localStorage.setItem('file', reader.result)
-        this.getImage()
+    onFilePicked(files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        this.$store.commit("addToDocs", file);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          localStorage.setItem(`file${i}`, reader.result);
+          this.getImage();
+        };
       }
-
     },
     // filter the countries array on the basis of the input value
     filterFn(val, update) {

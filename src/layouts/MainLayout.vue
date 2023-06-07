@@ -57,6 +57,16 @@
       </q-toolbar>
     </q-footer>
     <q-page-container>
+      <q-dialog v-model="update" position="top">
+        <q-banner class="bg-positive text-white">
+          New update available. Updates include: <br>
+          1. New Features <br>
+          2. Bugs fixes and improvements <br>
+          <template v-slot:action>
+            <q-btn @click="updateApp" outline color="white" label="Update" />
+          </template>
+        </q-banner>
+      </q-dialog>
       <router-view />
     </q-page-container>
   </q-layout>
@@ -75,12 +85,29 @@ header{
 }
 </style>
 <script>
-
+import { Workbox } from 'workbox-window'
 export default {
   // components: { NotificationBox },
   data () {
     return {
       leftDrawerOpen: false
+    }
+  },
+  methods: {
+    updateApp () {
+      this.workbox.addEventListener('controlling', () => {
+        window.location.reload()
+      })
+      this.workbox.messageSkipWaiting()
+    }
+  },
+  mounted () {
+    if ('serviceWorker' in navigator) {
+      this.workbox = new Workbox('service-worker.js')
+      this.workbox.addEventListener('waiting', (event) => {
+        this.update = !this.update
+      })
+      this.workbox.register()
     }
   },
   computed: {
