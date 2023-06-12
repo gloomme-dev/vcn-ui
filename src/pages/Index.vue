@@ -180,17 +180,14 @@ export default {
           if(userRoles){
 
             // this.$router.push({ name: "dashboard-user" });
-            if(userRoles.authority==="VET"){
+            if(userRoles.authority==="VET" || userRoles.authority==="PARA" || userRoles.authority==="PRAC"){
               this.$router.push({ name: "member-dashboard" });
             }
             else if(userRoles.authority==="ADMIN"){
               this.$router.push({ name: "members-admin" });
             }
             else if(userRoles.authority==="CO-ORDINATOR"){
-              this.$router.push({ name: "members-admin" });
-            }
-            else if(userRoles.authority==="PARA"){
-              this.$router.push({ name: "member-dashboard" });
+              this.$router.push({ name: "permits-staff" });
             }
           }
 

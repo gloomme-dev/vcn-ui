@@ -113,6 +113,39 @@ const routes = [
       }
       ]
   },
+  // staff
+  {
+    path: '/staff',
+    component: () => import('layouts/staff.vue'),
+    children: [
+      {
+        meta: { transitionName: 'slide-fade', title: 'Dashboard', back: 'dashboard-admin',url: '' , icon: 'dashboard', showToolBar: true, showButtonNav: true },
+        path: "dashboard",
+        name: "dashboard-admin",
+        component: () => import("pages/admin/dashboard.vue"),
+      },
+      {
+        meta: { transitionName: 'slide-fade', title: 'Activities', back: 'dashboard-admin', url: 'profile' ,icon: 'account_circle', showToolBar: true, showButtonNav: true },
+        path: "profile",
+        name: "staff-profile",
+        component: () => import("pages/common/profile.vue"),
+      },
+      {
+        meta: { transitionName: 'slide-fade', title: 'Permits', back: 'dashboard-admin', url: 'permit' , icon: 'workspace_premium', showToolBar: true, showButtonNav: true },
+        path: "permits",
+        name: "permits-staff",
+        component: () => import("pages/staff/permits.vue"),
+      },
+      {
+        meta: { transitionName: 'slide-fade', title: 'Invoice', back: 'dashboard-user', url: 'invoice' , icon: 'receipt', showToolBar: true, showButtonNav: true },
+        path: "invoice",
+        name: "staff-invoice",
+        component: () => import("pages/admin/invoice.vue"),
+      }
+
+    ]
+  },
+
 
   // Always leave this as last one,
   // but you can also remove it

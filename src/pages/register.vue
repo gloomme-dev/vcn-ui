@@ -183,12 +183,36 @@
                 </div>
               <!--              dob-->
               <div class="col-md-5 col-xs-11 card-input">
-                <q-input standout label="Date of Birth" label-position="above"   type="date"   color="grey" v-model="form.dob"   focused>
-                  <template  v-slot:prepend>
-                    <q-icon name="date_range" />
-                  </template>
-                </q-input>
+              <q-input  borderless   v-model="form.dob" label="Date of Birth">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="form.dob" mask="DD-MM-YYYY">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Ok"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
               </div>
+<!--              &lt;!&ndash;              dob&ndash;&gt;-->
+<!--              <div class="col-md-5 col-xs-11 card-input">-->
+<!--                <q-input standout label="Date of Birth" label-position="above"   type="date"   color="grey" v-model="form.dob"   focused>-->
+<!--                  <template  v-slot:prepend>-->
+<!--                    <q-icon name="date_range" />-->
+<!--                  </template>-->
+<!--                </q-input>-->
+<!--              </div>-->
               <!--state/Region-->
               <div class="col-md-5 col-xs-11 card-input">
                 <q-select      label="State"  behavior="menu" transition-show="jump-up" transition-hide="jump-up" color="teal"  v-model="form.stateOrigin" :options="states" >
@@ -239,15 +263,15 @@
 
             </q-form>
             <q-stepper-navigation class="q-gutter-x-md">
-              <q-btn
-                icon="chevron_left"
-                no-caps
-                flat
-                @click="step = 1"
-                color="accent"
-                label="Back"
-                class="q-ml-sm q-pr-sm"
-              />
+<!--              <q-btn-->
+<!--                icon="chevron_left"-->
+<!--                no-caps-->
+<!--                flat-->
+<!--                @click="step = 1"-->
+<!--                color="accent"-->
+<!--                label="Back"-->
+<!--                class="q-ml-sm q-pr-sm"-->
+<!--              />-->
               <q-btn
                 @click="step = 2"
                 class="q-pl-sm q-pr-sm"
@@ -285,14 +309,39 @@
                 </q-select>
               </div>
 
-<!--              dateAwarded-->
+              <!--              dateAwarded-->
               <div class="col-md-5 col-xs-11 card-input">
-                <q-input label="Date Awarded"   type="date"   color="grey" v-model="form.dateAwarded"   >
-                  <template  v-slot:prepend>
-                    <q-icon name="date_range" />
+                <q-input  borderless   v-model="form.dateAwarded" label="Date Awarded">
+                  <template v-slot:prepend>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-date v-model="form.dateAwarded" mask="DD-MM-YYYY">
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Ok"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
                   </template>
                 </q-input>
               </div>
+
+<!--&lt;!&ndash;              dateAwarded&ndash;&gt;-->
+<!--              <div class="col-md-5 col-xs-11 card-input">-->
+<!--                <q-input label="Date Awarded"   type="date"   color="grey" v-model="form.dateAwarded"   >-->
+<!--                  <template  v-slot:prepend>-->
+<!--                    <q-icon name="date_range" />-->
+<!--                  </template>-->
+<!--                </q-input>-->
+<!--              </div>-->
 <!--              <div class=" q-ml-xl text-left col-md-12 q-gutter-y-sm q-gutter-x-lg ">-->
 <!--                <div class="text-subtitle2">Inclusion of additional Qualification attracts additional fee</div>-->
 
@@ -446,9 +495,6 @@ export default {
     getActivity () {
       let url = 'activity'
       this.get(url).then(response => {
-
-        console.log(response)
-
         if (response.data.length === 0) {
 
           this.$q.notify({
@@ -461,10 +507,6 @@ export default {
 
           // filter to activityType = 'Once'
           this.activities = response.data.filter(activity => activity.activityType === 'Registration')
-
-          // this.activities = response.data
-
-
 
         }
       })

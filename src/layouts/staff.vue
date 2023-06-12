@@ -29,21 +29,15 @@
                   <q-img   alt="Crate365  logo"  src="https://res.cloudinary.com/galaxycom/image/upload/v1681513241/carter365_hxted2.png" />
                 </q-avatar>
                 <div class="text-weight-bold text-white q-mt-sm">
-                  {{ user.fullname  }}
+                  <span class="text-white">{{ user.firstName + ' ' + user.lastName }}</span>
                 </div>
-                <div class="text-primary"><q-chip square class="white-frost">Admin</q-chip></div>
+                <div class="text-primary"><q-chip square class="white-frost">Coordinator</q-chip></div>
               </div>
             </q-card>
           </div>
-          <q-item class="text-white" :to="{ name:'members-admin' }"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="groups" />
-            </q-item-section>
 
-            <q-item-section> Members </q-item-section>
-          </q-item>
 
-          <q-item class="text-white" :to="{ name:'permits-admin' }"  clickable v-ripple>
+          <q-item class="text-white" :to="{ name:'permits-staff' }"  clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="workspace_premium" />
             </q-item-section>
@@ -51,15 +45,8 @@
             <q-item-section> APL </q-item-section>
           </q-item>
 
-          <q-item class="text-white"  :to="{ name:'transactions-admin' }"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="account_balance_wallet" />
-            </q-item-section>
 
-            <q-item-section> Payments </q-item-section>
-          </q-item>
-
-          <q-item class="text-white" :to="{ name:'admin-invoice' }"  clickable v-ripple>
+          <q-item class="text-white" :to="{ name:'staff-invoice' }"  clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="receipt" />
             </q-item-section>
@@ -67,29 +54,6 @@
             <q-item-section> Invoices </q-item-section>
           </q-item>
 
-          <q-item class="text-white"  :to="{ name:'payment-admin' }"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="account_balance" />
-            </q-item-section>
-
-            <q-item-section> Payment Types</q-item-section>
-          </q-item>
-
-          <q-item class="text-white"  :to="{ name:'activities-admin' }"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="event" />
-            </q-item-section>
-
-            <q-item-section> Activities </q-item-section>
-          </q-item>
-
-          <q-item  :to="{ name:'staff-admin' }"  class="text-white"  clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="people" />
-            </q-item-section>
-
-            <q-item-section> Staff </q-item-section>
-          </q-item>
 
           <q-item class="text-white"  clickable v-ripple>
             <q-item-section avatar>
@@ -126,7 +90,19 @@ import { LocalStorage } from "quasar";
 export default {
   data() {
     return {
-      user: '',
+      user: {
+        avatar: "",
+        applicationFile: [
+          {
+            file: ""
+          }
+        ],
+        roles: [
+          {
+            title: ""
+          }
+        ]
+      },
       left: false,
       update: false,
       // workbox: new Workbox('service-worker.js')
@@ -134,6 +110,35 @@ export default {
   },
 
   methods: {
+    getProfile() {
+      const url = "profile"
+      this.get(url)
+        .then((response) => {
+          this.user = response.data
+          //  save to local storage
+          localStorage.setItem('profile', JSON.stringify(response.data))
+          // if this.user.applicationFile[0].file is empty, use default avatar
+          if (this.user.applicationFile  === undefined ) {
+
+          }
+          else{
+            const avatar = "data:image/png;base64," + this.user.applicationFile[0].file
+            this.user.avatar = avatar
+            localStorage.setItem('profile', JSON.stringify(this.user))
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$q.notify({
+            type: 'negative',
+            message: 'Cannot get user profile ',
+            actions: [
+              { icon: 'refresh', color: 'white', handler: () => {  } }
+            ]
+          })
+        });
+    }
+
     // updateApp () {
     //   this.workbox.addEventListener('controlling', () => {
     //     window.location.reload()
@@ -143,6 +148,12 @@ export default {
   },
 
   mounted() {
+    if (!LocalStorage.getItem("profile")) {
+      this.getProfile()
+    }
+    else {
+      this.user = JSON.parse(LocalStorage.getItem("profile"))
+    }
   },
 };
 </script>

@@ -57,7 +57,7 @@
               <q-icon name="workspace_premium" />
             </q-item-section>
 
-            <q-item-section> Permits </q-item-section>
+            <q-item-section> APL </q-item-section>
           </q-item>
 
 <!--          <q-item v-if="user.membershipStatus==true" class="text-white" :to="{ name:'permit-user' }"  clickable v-ripple>-->

@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf" class="bg-white">
     <q-header class="bg-info text-primary q-pa-sm">
       <q-toolbar>
-        <q-btn v-if="$route.meta.title==='Register'" dense flat round icon="chevron_left" @click="$router.go(-1)" >
+        <q-btn v-if="$route.meta.title==='Register'" dense flat round icon="chevron_left" :to="{ name:'Home' }" >
           <q-tooltip>Back</q-tooltip>
         </q-btn>
         <q-avatar    size="44px" >
